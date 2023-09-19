@@ -17,8 +17,9 @@ fun main() {
             it.aliasCheck = ApproveAliases()
         }
 
+        config.staticFiles.enableWebjars()
         config.vue.rootDirectory(path = "src/main/resources/vue", Location.EXTERNAL)
-        config.vue.optimizeDependencies = false
+        config.vue.vueAppName = "app"
 
 //        config.plugins.enableRouteOverview("/routes")
     }

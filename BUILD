@@ -64,8 +64,6 @@ filegroup(
     srcs =
         glob([
             "src/main/resources/public/**/*",
-            #            "src/main/resources/vue/**/*",
-            "src/main/resources/vue/layout.html",
-            "src/main/resources/vue/page-welcome.vue",
+            "src/main/resources/vue/**/*",
         ]),
 )
