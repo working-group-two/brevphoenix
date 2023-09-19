@@ -20,9 +20,16 @@ kt_jvm_library(
             "src/main/kotlin/**/*.kt",
         ],
     ),
+    data = [
+        ":data",
+    ],
     deps = [
+        "@maven//:com_fasterxml_jackson_core_jackson_databind",
+        "@maven//:com_fasterxml_jackson_module_jackson_module_kotlin",
         "@maven//:io_javalin_javalin",
         "@maven//:org_slf4j_slf4j_simple",
+        "@maven//:org_webjars_npm_axios",
+        "@maven//:org_webjars_npm_vue",
     ],
 )
 
@@ -30,7 +37,6 @@ java_library(
     name = "java_test_deps",
     testonly = True,
     exports = [
-        "@maven//:io_javalin_javalin",
         "@maven//:junit_junit",
         "@maven//:org_assertj_assertj_core",
     ],
@@ -51,4 +57,15 @@ java_test(
     runtime_deps = [
         ":kotlin_test_deps",
     ],
+)
+
+filegroup(
+    name = "data",
+    srcs =
+        glob([
+            "src/main/resources/public/**/*",
+            #            "src/main/resources/vue/**/*",
+            "src/main/resources/vue/layout.html",
+            "src/main/resources/vue/page-welcome.vue",
+        ]),
 )

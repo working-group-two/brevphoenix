@@ -23,10 +23,14 @@ load("@rules_jvm_external//:defs.bzl", "maven_install")
 
 maven_install(
     artifacts = [
+        "com.fasterxml.jackson.core:jackson-databind:2.15.2",
+        "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2",
         "io.javalin:javalin:5.6.1",
         "org.slf4j:slf4j-simple:2.0.9",
         "junit:junit:4.13.2",
         "org.assertj:assertj-core:3.20.2",
+        "org.webjars.npm:axios:jar:1.5.0",
+        "org.webjars.npm:vue:jar:3.3.4",
     ],
     repositories = [
         "https://maven.google.com",
