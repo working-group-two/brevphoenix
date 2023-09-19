@@ -7,7 +7,7 @@ java_binary(
     name = "server",
     data = [
     ],
-    main_class = "com.example.MainKt",
+    main_class = "com.brevphoenix.MainKt",
     runtime_deps = [
         ":server_lib",
     ],
@@ -47,7 +47,7 @@ kt_jvm_library(
 
 java_test(
     name = "tests",
-    test_class = "com.example.HelloTest",
+    test_class = "com.brevphoenix.HelloTest",
     runtime_deps = [
         ":kotlin_test_deps",
     ],

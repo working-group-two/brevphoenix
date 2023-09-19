@@ -1,4 +1,4 @@
-package com.example
+package com.brevphoenix
 
 import io.javalin.Javalin
 

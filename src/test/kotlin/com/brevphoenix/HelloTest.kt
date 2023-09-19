@@ -1,4 +1,4 @@
-package com.example
+package com.brevphoenix
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test;
