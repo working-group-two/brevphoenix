@@ -2,7 +2,7 @@
   <button class="conversation-item grid text-gray-300 p-4 hover:bg-orange-950" :class="{ active }" @click="$emit('click', msisdn)">
     <span class="msisdn">{{ msisdn }}<span v-if="name != null" class="text-gray-400 text-sm"> ({{ name }})</span></span>
     <span v-if="lastMessage != null" class="time justify-self-end text-xs text-gray-400">{{ timeAgo }}</span>
-    <span v-if="lastMessage != null" class="message"><template v-if="lastMessage.direction === 'out'">You: </template>{{ lastMessage.message }}</span>
+    <span v-if="lastMessage != null" class="message"><template v-if="lastMessage.direction === 'FROM_SUBSCRIBER'">You: </template>{{ lastMessage.content }}</span>
   </button>
 </template>
 <script>
@@ -33,11 +33,12 @@ app.component("conversation-item", {
       if (this.lastMessage == null) {
         return null;
       }
-      const diff = new Date() - this.lastMessage.time;
+      const lastMessageDate = new Date(this.lastMessage.timestamp);
+      const diff = new Date() - lastMessageDate;
       if (diff < 1000 * 60 * 60 * 24) {
-        return this.lastMessage.time.toLocaleTimeString();
+        return lastMessageDate.toLocaleTimeString();
       }
-      return this.lastMessage.time.toLocaleDateString();
+      return lastMessageDate.toLocaleDateString();
     }
   },
 });

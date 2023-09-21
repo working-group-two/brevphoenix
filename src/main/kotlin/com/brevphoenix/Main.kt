@@ -16,6 +16,7 @@ import io.javalin.apibuilder.ApiBuilder.path
 import io.javalin.apibuilder.ApiBuilder.post
 import io.javalin.http.staticfiles.Location
 import io.javalin.json.JavalinJackson
+import io.javalin.validation.JavalinValidation
 import io.javalin.vue.VueComponent
 import org.eclipse.jetty.server.handler.ContextHandler.ApproveAliases
 
@@ -50,6 +51,7 @@ fun main() {
         )
     }
 
+    JavalinValidation.register(PhoneNumber::class.java, PhoneNumber::parse)
     SmsService.init()
 
     app.routes {

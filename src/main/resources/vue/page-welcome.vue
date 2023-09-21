@@ -3,13 +3,12 @@
     <nav class="flex flex-col h-full">
       <h1 class="text-2xl p-4"><button @click="activeConversationMsisdn = null">BrevPhoenix ✉️🕊🔥</button></h1>
       <conversation-item
-          v-for="(c, msisdn, i) in conversationsMap"
-          @click="setActive(msisdn)"
-          :key="msisdn"
-          :msisdn="msisdn"
-          :name="c.name"
-          :last-message="c.messages.at(-1)"
-          :active="isActive(msisdn, i)"
+          v-for="(conversation, msisdnOrText) in msisdnToSmsMap"
+          @click="setActive(msisdnOrText)"
+          :key="msisdnOrText"
+          :msisdn="msisdnOrText"
+          :last-message="conversation.at(-1)"
+          :active="isActive(msisdnOrText)"
       ></conversation-item>
     </nav>
     <main class="flex-grow bg-gradient-to-tr from-orange-900 to-amber-600">
@@ -21,17 +20,17 @@
       <div v-else class="flex flex-col h-full">
         <h2 class="text-2xl p-4">{{ activeConversation.msisdn }}<span v-if="activeConversation.name != null"> ({{ activeConversation.name }})</span></h2>
         <div class="flex-grow overflow-y-auto flex flex-col h-full" ref="messages">
-          <div v-for="(m, i) in activeConversation.messages" class="flex flex-col p-4" :class="{ 'mt-auto': i === 0 }">
-            <div v-if="m.direction === 'out'" class="flex flex-row-reverse">
+          <div v-for="(m, i) in activeConversation" class="flex flex-col p-4" :class="{ 'mt-auto': i === 0 }">
+            <div v-if="m.direction === 'FROM_SUBSCRIBER'" class="flex flex-row-reverse">
               <div class="flex flex-col">
-                <div class="text-gray-200 text-xs max-w self-end">{{ m.time.toLocaleTimeString() }}</div>
-                <div class="bg-orange-950 text-gray-300 p-2 rounded max-w-prose">{{ m.message }}</div>
+                <div class="text-gray-200 text-xs max-w self-end">{{ new Date(m.timestamp).toLocaleTimeString() }}</div>
+                <div class="bg-orange-950 text-gray-300 p-2 rounded max-w-prose">{{ m.content }}</div>
               </div>
             </div>
             <div v-else class="flex flex-row">
               <div class="flex flex-col">
-                <div class="text-gray-200 text-xs">{{ m.time.toLocaleTimeString() }}</div>
-                <div class="bg-gray-800 text-gray-300 p-2 rounded max-w-prose">{{ m.message }}</div>
+                <div class="text-gray-200 text-xs">{{ new Date(m.timestamp).toLocaleTimeString() }}</div>
+                <div class="bg-gray-800 text-gray-300 p-2 rounded max-w-prose">{{ m.content }}</div>
               </div>
             </div>
           </div>
@@ -51,26 +50,7 @@ app.component("page-welcome", {
     return {
       message: "",
       activeConversationMsisdn: null,
-      sms: [],
-      conversationsMap: {
-        "Posten": {
-          msisdn: "Posten",
-          messages: [{
-            time: new Date(),
-            message: "Hei! Din leveranse fra Vetzoo.no er på vei. Den blir levert hjem. Se planlagt leveringstidspunkt her: https://youtu.be/dQw4w9WgXcQ"
-          },],
-        },
-        "+4798653759": {
-          msisdn: "+4798653759",
-          name: "Jørund Fagerjord",
-          messages: [
-            {time: new Date("2021-12-10T12:00:03+01:00"), message: "More testing 🤠", direction: "out"},
-            {time: new Date("2021-12-10T12:00:05+01:00"), message: "More testing 🤠", direction: "in"},
-            {time: new Date("2021-01-01T00:00:01+01:00"), message: "Happy new year testing! 🥳", direction: "out"},
-            {time: new Date("2021-01-01T00:00:01+03:00"), message: "Happy new year testing! 🥳", direction: "in"},
-          ],
-        },
-      },
+      msisdnToSmsMap: {},
     }
   },
   created() {
@@ -78,7 +58,7 @@ app.component("page-welcome", {
   },
   computed: {
     activeConversation() {
-      return this.conversationsMap[this.activeConversationMsisdn];
+      return this.msisdnToSmsMap[this.activeConversationMsisdn];
     },
   },
   methods: {
@@ -89,20 +69,31 @@ app.component("page-welcome", {
       this.activeConversationMsisdn = msisdn;
       setTimeout(() => { this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight; }, 0);
     },
-    sendMessage(e) {
+    sendMessage() {
       if (this.message.trim() === "") {
         return;
       }
-      this.activeConversation.messages.push({
-        time: new Date(),
-        message: this.message,
-        direction: "out",
+      const id = window.crypto.randomUUID();
+      const to = this.activeConversationMsisdn;
+      const content = this.message;
+      this.activeConversation.push({
+        id,
+        timestamp: new Date().toISOString(),
+        content,
+        direction: "FROM_SUBSCRIBER",
       });
       this.message = "";
+      axios.post(`/api/sms/${to}`, content)
+          .then(() => {})
+          .catch(e => {
+            console.error(e);
+            alert(`Failed to send message, please try again later. Manually save your message to ${to} if you want to keep it:\n` + content);
+            this.msisdnToSmsMap[to] = this.msisdnToSmsMap[to].filter(m => m.id !== id);
+          });
     },
     getSms() {
       axios.get("/api/sms").then(res => {
-        this.sms = res.data;
+        this.msisdnToSmsMap = res.data;
       });
     },
   },
