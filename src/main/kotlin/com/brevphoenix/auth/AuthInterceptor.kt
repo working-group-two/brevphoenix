@@ -10,7 +10,7 @@ import io.grpc.MethodDescriptor
 class AuthInterceptor(clientId: String, clientSecret: String) : ClientInterceptor {
 
     private val tokenSource = WgtwoAuth.builder(clientId, clientSecret).build()
-        .clientCredentials.newTokenSource("sms.text:send_to_subscriber")
+        .clientCredentials.newTokenSource(RequiredScopes.scopes.joinToString(" "))
 
     override fun <ReqT, RespT> interceptCall(
         method: MethodDescriptor<ReqT, RespT>,

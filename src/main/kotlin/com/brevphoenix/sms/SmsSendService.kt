@@ -12,6 +12,30 @@ object SmsSendService {
     private val smsStub =
         SmsServiceGrpc.newBlockingStub(GrpcShared.channel).withInterceptors(GrpcShared.authInterceptor)
 
+    fun sendFromSubscriber(from: String, to: String, content: String): String {
+        val request = SmsProto.SendTextFromSubscriberRequest.newBuilder().apply {
+            this.fromSubscriber = from
+            this.toAddress = to
+            this.content = content
+        }.build()
+
+        return sendTextFromSubscriber(request)
+    }
+
+    private fun sendTextFromSubscriber(request: SmsProto.SendTextFromSubscriberRequest): String {
+        val response = smsStub.sendTextFromSubscriber(request)
+        when (response.status) {
+            SmsProto.SendMessageResponse.SendStatus.SEND_STATUS_OK -> return response.messageId
+            SmsProto.SendMessageResponse.SendStatus.SEND_STATUS_UNSPECIFIED,
+            SmsProto.SendMessageResponse.SendStatus.SEND_STATUS_REJECT,
+            SmsProto.SendMessageResponse.SendStatus.SEND_STATUS_ERROR,
+            SmsProto.SendMessageResponse.SendStatus.UNRECOGNIZED,
+            -> throw RuntimeException(response.description)
+
+            else -> throw RuntimeException(response.status.toString())
+        }
+    }
+
     fun sendToSubscriber(phoneNumber: PhoneNumber, content: String) {
         val request = SmsProto.SendTextToSubscriberRequest.newBuilder().apply {
             this.fromAddress = SENDER_NAME
@@ -19,6 +43,10 @@ object SmsSendService {
             this.content = content
         }.build()
 
+        sendTextToSubscriber(request)
+    }
+
+    private fun sendTextToSubscriber(request: SmsProto.SendTextToSubscriberRequest) {
         val response = smsStub.sendTextToSubscriber(request)
         when (response.status) {
             SmsProto.SendMessageResponse.SendStatus.SEND_STATUS_OK -> return

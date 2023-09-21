@@ -24,7 +24,9 @@ load("@rules_jvm_external//:defs.bzl", "maven_install")
 maven_install(
     artifacts = [
         "com.fasterxml.jackson.core:jackson-databind:2.15.2",
+        "com.fasterxml.jackson.core:jackson-annotations:2.15.2",
         "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2",
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2",
         "io.javalin:javalin:5.6.1",
         "org.slf4j:slf4j-simple:2.0.9",
         "junit:junit:4.13.2",
@@ -32,9 +34,10 @@ maven_install(
         "org.webjars.npm:axios:jar:1.5.0",
         "org.webjars.npm:vue:jar:3.3.4",
         "com.wgtwo.api.v1.grpc:sms:1.10.1",
-        "com.wgtwo.api.v0.grpc:consents:0.1.4",
+        "com.wgtwo.api.v0.grpc:events:0.1.6",
         "com.wgtwo.api:auth:0.0.3",
         "com.googlecode.libphonenumber:libphonenumber:8.13.14",
+        "com.google.protobuf:protobuf-java-util:3.18.1",
     ],
     repositories = [
         "https://maven.google.com",
@@ -56,8 +59,6 @@ http_archive(
 
 load("@rules_kotlin//kotlin:repositories.bzl", "kotlin_repositories")
 
-kotlin_repositories()  # if you want the default. Otherwise see custom kotlinc distribution below
+kotlin_repositories()
 
-load("@rules_kotlin//kotlin:core.bzl", "kt_register_toolchains")
-
-kt_register_toolchains()  # to use the default toolchain, otherwise see toolchains below
+register_toolchains("//:kotlin_toolchain")

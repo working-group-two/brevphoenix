@@ -27,7 +27,7 @@ object SigninHandler {
         ctx.sessionAttribute(PHONE_NUMBER_KEY, phoneNumber)
         ctx.sessionAttribute(PIN_KEY, randomPin)
         ctx.sessionAttribute(PIN_TIME_KEY, Instant.now())
-        val smsContent = "$randomPin is your BrevPhoenix authentication code."
+        val smsContent = "$randomPin is your auth code"
         try {
             logger.info("Sending SMS to $phoneNumber: $smsContent")
             SmsSendService.sendToSubscriber(phoneNumber, smsContent)

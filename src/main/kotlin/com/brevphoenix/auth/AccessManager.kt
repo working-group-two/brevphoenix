@@ -51,7 +51,7 @@ private fun fileSessionHandler(): SessionHandler = SessionHandler().apply {
     sessionCache = DefaultSessionCache(this).apply {
         sessionDataStore = FileSessionDataStore().apply {
             val baseDir = File(System.getProperty("java.io.tmpdir"))
-            this.storeDir = File(baseDir, "storefront-session-store").apply { mkdir() }
+            this.storeDir = File(baseDir, "brevdue-session-store").apply { mkdir() }
         }
     }
     sessionCookieConfig.isHttpOnly = true

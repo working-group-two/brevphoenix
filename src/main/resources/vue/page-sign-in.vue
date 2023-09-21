@@ -2,20 +2,21 @@
   <div class="page-sign-in h-full w-full grid place-content-center bg-amber-950 text-orange-100">
     <img src="/favicon.jpeg" alt="decorative phoenix" width="1024" height="1024" class="max-w-lg rounded-3xl block">
     <h1 class="text-2xl p-4 text-center">Sign in to BrevPhoenix—SMS is back</h1>
-    <form v-if="!pinSent" class="flex flex-col gap-2">
+    <form v-if="!pinSent" class="flex flex-col gap-2" @submit.prevent="sendPin">
       <input
           class="rounded p-2 text-gray-950 bg-amber-100"
           v-model="phoneNumber"
-          placeholder="999 12 345"
+          placeholder="+999 12 345"
           type="tel"
           autocomplete="tel"
           key="phone"
       >
-      <button :disabled="sendingPin" @click="sendPin" class="rounded p-2 bg-amber-800">Send pin</button>
+      <button :disabled="sendingPin" class="rounded p-2 bg-amber-800">Send pin</button>
     </form>
-    <div v-if="pinSent">
+    <form v-if="pinSent" @submit="validatePin" class="flex flex-col gap-2">
       <p>PIN sent to {{ phoneNumber }}</p>
       <input
+          class="rounded p-2 text-gray-950 bg-amber-100"
           v-model="pin"
           placeholder="1234"
           type="tel"
@@ -23,10 +24,9 @@
           key="pin"
           maxlength="4"
       >
-      <input>
-      <button :disabled="validatingPin" @click="validatePin">Verify</button>
-      <button @click="resetForm">Go back</button>
-    </div>
+      <button :disabled="validatingPin" class="rounded p-2 bg-amber-800">Verify</button>
+      <button @click="resetForm" class="">Go back</button>
+    </form>
   </div>
 </template>
 <script>

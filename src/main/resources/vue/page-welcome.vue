@@ -51,6 +51,7 @@ app.component("page-welcome", {
     return {
       message: "",
       activeConversationMsisdn: null,
+      sms: [],
       conversationsMap: {
         "Posten": {
           msisdn: "Posten",
@@ -71,6 +72,9 @@ app.component("page-welcome", {
         },
       },
     }
+  },
+  created() {
+    this.getSms();
   },
   computed: {
     activeConversation() {
@@ -95,6 +99,11 @@ app.component("page-welcome", {
         direction: "out",
       });
       this.message = "";
+    },
+    getSms() {
+      axios.get("/api/sms").then(res => {
+        this.sms = res.data;
+      });
     },
   },
 });

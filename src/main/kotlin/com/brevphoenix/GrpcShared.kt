@@ -18,6 +18,6 @@ object GrpcShared {
 
     fun close() {
         channel.shutdown()
-        channel.awaitTermination(1, TimeUnit.SECONDS)
+        channel.awaitTermination(3, TimeUnit.SECONDS)
     }
 }
