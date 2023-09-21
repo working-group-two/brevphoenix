@@ -29,7 +29,7 @@ object AccessManager {
         when {
             Role.ANY in permittedRoles -> handler.handle(ctx)
             ctx.currentUser == null -> {
-                ctx.sessionAttribute(LOGIN_REDIRECT_KEY, ctx.fullUrl())
+                ctx.sessionAttribute(LOGIN_REDIRECT_KEY, "/")
                 ctx.redirect("/sign-in")
             }
             Role.SIGNED_IN in permittedRoles -> handler.handle(ctx)
