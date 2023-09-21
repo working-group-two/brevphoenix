@@ -30,5 +30,6 @@ object SmsService {
         val subscriberPhoneNumber = (subscriberAddress as? Address.InternationalNumber)?.phoneNumber ?: return
         val e164 = subscriberPhoneNumber.e164
         messages.compute(e164) { _, list -> list?.plus(sms) ?: listOf(sms) }
+        SmsWsService.handleReceivedSms(sms)
     }
 }

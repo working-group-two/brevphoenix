@@ -14,6 +14,7 @@ import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.get
 import io.javalin.apibuilder.ApiBuilder.path
 import io.javalin.apibuilder.ApiBuilder.post
+import io.javalin.apibuilder.ApiBuilder.ws
 import io.javalin.http.staticfiles.Location
 import io.javalin.json.JavalinJackson
 import io.javalin.validation.JavalinValidation
@@ -66,6 +67,10 @@ fun main() {
             path("/sms") {
                 get("/", SmsController::getSms, Role.SIGNED_IN)
                 post("/{to}", SmsController::sendSms, Role.SIGNED_IN)
+                ws("/", { ws ->
+                    ws.onConnect(SmsController::handleWsConnect)
+                    ws.onClose(SmsController::handleWsClose)
+                }, Role.SIGNED_IN)
             }
         }
     }

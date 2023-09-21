@@ -27,16 +27,18 @@ object SigninHandler {
         ctx.sessionAttribute(PHONE_NUMBER_KEY, phoneNumber)
         ctx.sessionAttribute(PIN_KEY, randomPin)
         ctx.sessionAttribute(PIN_TIME_KEY, Instant.now())
-        val smsContent = "$randomPin is your auth code"
+        val smsContent = getSmsContent(randomPin)
         try {
             logger.info("Sending SMS to $phoneNumber: $smsContent")
-            SmsSendService.sendToSubscriber(phoneNumber, smsContent)
+            SmsSendService.sendFromSubscriber(from = phoneNumber.e164, to = phoneNumber.e164, smsContent)
             ctx.status(200)
         } catch (e: Exception) {
             logger.error("Error sending PIN", e)
             throw UnauthorizedResponse() // needs to be enabled by operator
         }
     }
+
+    private fun getSmsContent(randomPin: String) = "$randomPin is your BrevPhoenix auth code"
 
     fun validatePin(ctx: Context) {
         NaiveRateLimit.requestPerTimeUnit(ctx, 20, TimeUnit.HOURS)

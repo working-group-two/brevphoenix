@@ -5,6 +5,8 @@ import io.javalin.http.Context
 import io.javalin.http.Handler
 import io.javalin.http.UnauthorizedResponse
 import io.javalin.security.RouteRole
+import io.javalin.websocket.WsConnectContext
+import io.javalin.websocket.WsContext
 import org.eclipse.jetty.server.session.DefaultSessionCache
 import org.eclipse.jetty.server.session.FileSessionDataStore
 import org.eclipse.jetty.server.session.SessionHandler
@@ -16,6 +18,8 @@ const val USER_KEY = "current-user"
 const val LOGIN_REDIRECT_KEY = "post-login-redirect"
 val Context.currentUser: PhoneNumber? get() = this.sessionAttribute<PhoneNumber>(USER_KEY)
 val Context.signedInUser: PhoneNumber get() = currentUser!!
+val WsContext.currentUser: PhoneNumber? get() = this.sessionAttribute<PhoneNumber>(USER_KEY)
+val WsContext.signedInUser: PhoneNumber get() = currentUser!!
 
 object AccessManager {
 

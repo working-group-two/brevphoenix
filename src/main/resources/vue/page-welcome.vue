@@ -55,6 +55,7 @@ app.component("page-welcome", {
   },
   created() {
     this.getSms();
+    this.registerWs();
   },
   computed: {
     activeConversation() {
@@ -62,6 +63,35 @@ app.component("page-welcome", {
     },
   },
   methods: {
+    registerWs() {
+      const ws = new WebSocket(`ws://${window.location.host}/api/sms`);
+      ws.onmessage = e => {
+        const sms = JSON.parse(e.data);
+        const msisdn = this.getMsisdn(sms);
+        if (this.msisdnToSmsMap[msisdn] == null) {
+          this.msisdnToSmsMap[msisdn] = [];
+        }
+        const isActiveConversation = this.activeConversationMsisdn === msisdn;
+        const isFromSubscriber = sms.direction === "FROM_SUBSCRIBER";
+        if (isActiveConversation && isFromSubscriber) {
+          return;
+        }
+        this.msisdnToSmsMap[msisdn].push(sms);
+        if (this.activeConversationMsisdn === msisdn) {
+          setTimeout(() => { this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight; }, 0);
+        }
+      };
+      ws.onclose = e => {
+        console.log("ws closed", e);
+        setTimeout(() => { this.registerWs(); }, 1000);
+      };
+    },
+    getMsisdn(sms) {
+      if (sms.direction === "FROM_SUBSCRIBER") {
+        return sms.from.phoneNumber.e164;
+      }
+      return sms.to.phoneNumber.e164;
+    },
     isActive(msisdn) {
       return this.activeConversationMsisdn === msisdn;
     },
