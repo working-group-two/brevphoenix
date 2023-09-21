@@ -31,6 +31,10 @@ maven_install(
         "org.assertj:assertj-core:3.20.2",
         "org.webjars.npm:axios:jar:1.5.0",
         "org.webjars.npm:vue:jar:3.3.4",
+        "com.wgtwo.api.v1.grpc:sms:1.10.1",
+        "com.wgtwo.api.v0.grpc:consents:0.1.4",
+        "com.wgtwo.api:auth:0.0.3",
+        "com.googlecode.libphonenumber:libphonenumber:8.13.14",
     ],
     repositories = [
         "https://maven.google.com",

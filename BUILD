@@ -26,6 +26,10 @@ kt_jvm_library(
     deps = [
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
         "@maven//:com_fasterxml_jackson_module_jackson_module_kotlin",
+        "@maven//:com_googlecode_libphonenumber_libphonenumber",
+        "@maven//:com_wgtwo_api_auth",
+        "@maven//:com_wgtwo_api_v0_grpc_consents",
+        "@maven//:com_wgtwo_api_v1_grpc_sms",
         "@maven//:io_javalin_javalin",
         "@maven//:org_slf4j_slf4j_simple",
         "@maven//:org_webjars_npm_axios",
