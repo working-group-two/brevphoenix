@@ -13,7 +13,7 @@
       >
       <button :disabled="sendingPin" class="rounded p-2 bg-amber-800">Send pin</button>
     </form>
-    <form v-if="pinSent" @submit="validatePin" class="flex flex-col gap-2">
+    <form v-if="pinSent" @submit.prevent="validatePin" class="flex flex-col gap-2">
       <p>PIN sent to {{ phoneNumber }}</p>
       <input
           class="rounded p-2 text-gray-950 bg-amber-100"
@@ -23,6 +23,7 @@
           autocomplete="off"
           key="pin"
           maxlength="4"
+          :disabled="validatingPin"
       >
       <button :disabled="validatingPin" class="rounded p-2 bg-amber-800">Verify</button>
       <button @click="resetForm" class="">Go back</button>

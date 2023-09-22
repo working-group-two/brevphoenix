@@ -42,7 +42,6 @@ object AccessManager {
             ctx.req().changeSessionId()
         }
         ctx.sessionAttribute(USER_KEY, phoneNumber)
-        ctx.redirect(ctx.consumeSessionAttribute(LOGIN_REDIRECT_KEY) ?: "/")
     }
 
     fun signOutUser(ctx: Context) {
