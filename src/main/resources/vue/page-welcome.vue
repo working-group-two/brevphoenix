@@ -40,13 +40,13 @@
                     new Date(m.timestamp).toLocaleTimeString()
                   }}
                 </div>
-                <div class="bg-orange-950 text-orange-100 p-2 rounded max-w-prose">{{ m.content }}</div>
+                <div class="bg-orange-950 text-orange-100 p-2 rounded max-w-prose whitespace-pre">{{ m.content }}</div>
               </div>
             </div>
             <div v-else class="flex flex-row">
               <div class="flex flex-col">
                 <div class="text-orange-100 text-xs">{{ new Date(m.timestamp).toLocaleTimeString() }}</div>
-                <div class="bg-gray-800 text-orange-100 p-2 rounded max-w-prose">{{ m.content }}</div>
+                <div class="bg-gray-800 text-orange-100 p-2 rounded max-w-prose whitespace-pre">{{ m.content }}</div>
               </div>
             </div>
           </div>
@@ -54,9 +54,11 @@
         <form @submit.prevent="sendMessage"
               class="flex flex-row p-4 gap-1">
 
-          <textarea v-model="message" ref="message" type="text" @keydown.enter.shift.exact.prevent="message += '\n'"
+          <textarea v-model="message" ref="message" type="text"
+                    @keydown.enter.shift.exact.prevent="message += '\n'"
                     @keydown.prevent.ctrl.enter="sendMessage"
                     @keydown.prevent.meta.enter="sendMessage"
+                    @keydown.prevent.exact.enter="sendMessage"
                     class="message flex-grow bg-gray-800 text-orange-100 p-2 rounded"
                     placeholder="Type a message..."
           ></textarea>
