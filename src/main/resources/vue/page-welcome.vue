@@ -70,11 +70,14 @@ app.component("page-welcome", {
     activeConversationName() {
       return null;
     },
+    normalizedNewConversationMsisdn() {
+      return "+" + this.newConversation.replace(/[^0-9]/g, "");
+    },
   },
   methods: {
     createNewConversation() {
-      const msisdn = this.newConversation;
-      if (msisdn.trim() === "") {
+      const msisdn = this.normalizedNewConversationMsisdn;
+      if (msisdn.trim() === "+") {
         return;
       }
       this.newConversation = "";
