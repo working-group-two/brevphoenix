@@ -17,6 +17,7 @@ object SmsController {
             when {
                 (it.from as? Address.InternationalNumber)?.phoneNumber == user && (it.to as? Address.InternationalNumber)?.phoneNumber == user -> it.from.phoneNumber.e164
                 (it.to as? Address.InternationalNumber)?.phoneNumber != user -> (it.to as Address.InternationalNumber).phoneNumber.e164
+                it.from is Address.TextAddress -> it.from.text
                 (it.from as? Address.InternationalNumber)?.phoneNumber != user -> (it.from as Address.InternationalNumber).phoneNumber.e164
                 else -> null
             }
