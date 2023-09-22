@@ -24,7 +24,7 @@ class PhoneNumber private constructor(number: Phonenumber.PhoneNumber) : Seriali
 
         fun parse(number: String): PhoneNumber {
             val normalized = if (number.trim().startsWith("+")) number.trim() else "+${number.trim()}"
-            val googlePhoneNumber = util.parse("+$normalized", "ZZ")
+            val googlePhoneNumber = util.parse("+$normalized", "NO")
             require(util.isValidNumber(googlePhoneNumber)) { "Invalid phone number" }
             return PhoneNumber(googlePhoneNumber)
         }
