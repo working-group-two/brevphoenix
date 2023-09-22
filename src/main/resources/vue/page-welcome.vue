@@ -15,10 +15,12 @@
       ></conversation-item>
     </nav>
     <main class="flex-grow bg-gradient-to-tl to-black from-amber-700">
-      <div v-if="activeConversationMsisdn == null" class="flex flex-col items-center overflow-y-auto justify-center h-full text-orange-700" style="background: hsl(var(--bg-color-deg) 50% 2% / 1);">
-        <img src="/favicon.jpeg" alt="decorative phoenix" width="1024" height="1024" class="max-w-lg rounded-3xl block">
-        <h2 class="text-3xl mt-4">SMS has rerisen</h2>
-        <p class="text-lg text-orange-600">Select a conversation to get started</p>
+      <div v-if="activeConversationMsisdn == null" class="flex flex-col items-center justify-center overflow-y-auto h-full text-orange-700" style="background: hsl(var(--bg-color-deg) 50% 2% / 1);">
+        <div class="flex flex-col max-w-lg items-center justify-center">
+          <img src="/favicon.jpeg" alt="decorative phoenix" width="1024" height="1024" class="px-2 w-lg max-w-full rounded-3xl block">
+          <h2 class="text-3xl mt-4">SMS has rerisen</h2>
+          <p class="text-lg text-orange-600">Select a conversation or create a new one</p>
+        </div>
       </div>
       <div v-else class="flex flex-col h-full text-orange-100">
         <h2 class="text-2xl p-4 text-amber-600">{{ activeConversationMsisdn }}<span v-if="activeConversationName != null"> ({{ activeConversationName }})</span></h2>
@@ -111,7 +113,7 @@ app.component("page-welcome", {
     },
     setActive(msisdn) {
       this.activeConversationMsisdn = msisdn;
-      setTimeout(() => { this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight; }, 0);
+      this.$nextTick(() => { this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight; }, 0);
     },
     sendMessage() {
       if (this.message.trim() === "") {
