@@ -3,7 +3,7 @@
     <nav class="flex flex-col h-full">
       <h1 class="text-2xl text-orange-600 p-4"><button @click="activeConversationMsisdn = null">BrevPhoenix</button></h1>
       <form @submit.prevent="createNewConversation" class="p-4">
-        <input v-model="newConversation" type="tel" class="bg-orange-400 outline-amber-400 placeholder-amber-800 text-amber-950 rounded p-2 block w-full" placeholder="New conversation">
+        <input v-model.trim="newConversation" type="tel" class="bg-orange-400 outline-amber-400 placeholder-amber-800 text-amber-950 rounded p-2 block w-full" placeholder="New conversation">
       </form>
       <conversation-item
           v-for="(conversation, msisdnOrText) in msisdnToSmsMap"
@@ -77,7 +77,7 @@ app.component("page-welcome", {
   methods: {
     createNewConversation() {
       const msisdn = this.normalizedNewConversationMsisdn;
-      if (msisdn.trim() === "+") {
+      if (msisdn === "+") {
         return;
       }
       this.newConversation = "";
@@ -169,6 +169,25 @@ h1 {
   color: hsl(var(--bg-color-deg) 50% 80% / 1);
 }
 
-main {
+::-webkit-scrollbar {
+  width: 8px;
+  overflow: hidden;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: hsl(var(--bg-color-deg) 30% 3% / .5);
+  border-radius: 4px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--bg-color-deg) 30% 1% / .5);
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 </style>
