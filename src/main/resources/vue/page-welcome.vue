@@ -95,7 +95,7 @@ app.component("page-welcome", {
         }
         this.msisdnToSmsMap[conversationMsisdn] = [...(this.msisdnToSmsMap[conversationMsisdn] ?? []), sms];
         if (this.activeConversationMsisdn === conversationMsisdn) {
-          this.$nextTick(() => { this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight; }, 0);
+          this.scrollToBottomOfMessages();
         }
       };
       ws.onclose = e => {
@@ -113,6 +113,9 @@ app.component("page-welcome", {
     },
     setActive(msisdn) {
       this.activeConversationMsisdn = msisdn;
+      this.scrollToBottomOfMessages();
+    },
+    scrollToBottomOfMessages() {
       this.$nextTick(() => { this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight; }, 0);
     },
     sendMessage() {
@@ -128,6 +131,7 @@ app.component("page-welcome", {
         content,
         direction: "FROM_SUBSCRIBER",
       });
+      this.scrollToBottomOfMessages();
       this.message = "";
       axios.post(`/api/sms/${to}`, content)
           .then(() => {})
