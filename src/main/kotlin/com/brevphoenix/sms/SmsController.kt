@@ -10,16 +10,18 @@ import io.javalin.websocket.WsContext
 
 object SmsController {
 
-
     fun getSms(ctx: Context) {
         val user = ctx.signedInUser
         val smsList = SmsService.getSms(user)
-        val smsBySender = smsList.groupBy(Sms::from).mapKeys { (k, _) ->
-            when(k) {
-                is Address.InternationalNumber -> k.phoneNumber.e164
-                is Address.TextAddress -> k.text
+        val smsBySender: Map<String, List<Sms>> = smsList.groupBy {
+            when {
+                (it.from as? Address.InternationalNumber)?.phoneNumber == user && (it.to as? Address.InternationalNumber)?.phoneNumber == user -> it.from.phoneNumber.e164
+                (it.to as? Address.InternationalNumber)?.phoneNumber != user -> (it.to as Address.InternationalNumber).phoneNumber.e164
+                (it.from as? Address.InternationalNumber)?.phoneNumber != user -> (it.from as Address.InternationalNumber).phoneNumber.e164
+                else -> null
             }
-        }
+        }.filterKeys { it != null }
+            .mapKeys { it.key!! }
         ctx.json(smsBySender)
     }
 

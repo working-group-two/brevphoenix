@@ -16,17 +16,11 @@ object SmsWsService {
         connectedWsUsers.remove(e164)
     }
 
-    fun handleReceivedSms(sms: Sms) {
-        setOf(
-            sms.from,
-            sms.to,
-        ).filterIsInstance<Address.InternationalNumber>().forEach {
-            sendToAnyConnectedWsUser(it.phoneNumber.e164, sms)
-        }
+    fun handleReceivedSms(e164: String, sms: Sms) {
+        sendToAnyConnectedWsUser(e164, sms)
     }
 
     private fun sendToAnyConnectedWsUser(e164: String, sms: Sms) {
-        val ctx = connectedWsUsers[e164]
-        ctx?.send(sms)
+        connectedWsUsers[e164]?.send(sms)
     }
 }

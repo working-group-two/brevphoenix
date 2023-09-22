@@ -8,6 +8,6 @@ object SmsReceiverService : SmsReceiver {
     }
 
     override fun onReceived(sms: Sms) {
-        SmsService.handleReceivedSms(sms)
+        SmsService.handleObservedSms(sms)
     }
 }

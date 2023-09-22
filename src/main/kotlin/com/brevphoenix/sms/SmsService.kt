@@ -22,14 +22,20 @@ object SmsService {
         return messages[phoneNumber.e164] ?: emptyList()
     }
 
-    fun handleReceivedSms(sms: Sms) {
-        val subscriberAddress = when (sms.direction) {
+    fun handleObservedSms(sms: Sms) {
+        val e164 = getSmsSubE164(sms) ?: return
+        messages.compute(e164) { _, list -> list?.plus(sms) ?: listOf(sms) }
+        SmsWsService.handleReceivedSms(e164, sms)
+    }
+
+    fun getSmsSubE164(sms: Sms): String? {
+        val sub = when (sms.direction) {
             Sms.Direction.FROM_SUBSCRIBER -> sms.from
             Sms.Direction.TO_SUBSCRIBER -> sms.to
         }
-        val subscriberPhoneNumber = (subscriberAddress as? Address.InternationalNumber)?.phoneNumber ?: return
-        val e164 = subscriberPhoneNumber.e164
-        messages.compute(e164) { _, list -> list?.plus(sms) ?: listOf(sms) }
-        SmsWsService.handleReceivedSms(sms)
+        return when (sub) {
+            is Address.InternationalNumber -> sub.phoneNumber.e164
+            is Address.TextAddress -> null
+        }
     }
 }

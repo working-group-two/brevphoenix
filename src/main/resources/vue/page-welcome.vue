@@ -1,7 +1,10 @@
 <template id="page-welcome">
   <div class="page-welcome h-full w-full text-gray-300">
     <nav class="flex flex-col h-full">
-      <h1 class="text-2xl p-4"><button @click="activeConversationMsisdn = null">BrevPhoenix ✉️🕊🔥</button></h1>
+      <h1 class="text-2xl text-orange-600 p-4"><button @click="activeConversationMsisdn = null">BrevPhoenix</button></h1>
+      <form @submit.prevent="createNewConversation" class="p-4">
+        <input v-model="newConversation" type="tel" class="bg-orange-400 outline-amber-400 placeholder-amber-800 text-amber-950 rounded p-2 block w-full" placeholder="New conversation">
+      </form>
       <conversation-item
           v-for="(conversation, msisdnOrText) in msisdnToSmsMap"
           @click="setActive(msisdnOrText)"
@@ -11,32 +14,32 @@
           :active="isActive(msisdnOrText)"
       ></conversation-item>
     </nav>
-    <main class="flex-grow bg-gradient-to-tr from-orange-900 to-amber-600">
-      <div v-if="activeConversationMsisdn == null" class="flex flex-col items-center overflow-y-auto justify-center h-full" style="background: hsl(var(--bg-color-deg) 50% 2% / 1);">
+    <main class="flex-grow bg-gradient-to-tl to-black from-amber-700">
+      <div v-if="activeConversationMsisdn == null" class="flex flex-col items-center overflow-y-auto justify-center h-full text-orange-700" style="background: hsl(var(--bg-color-deg) 50% 2% / 1);">
         <img src="/favicon.jpeg" alt="decorative phoenix" width="1024" height="1024" class="max-w-lg rounded-3xl block">
-        <h2 class="text-3xl mt-4">Welcome to BrevPhoenix</h2>
-        <p class="text-gray-400"><strong>SMS is back.</strong> Select a conversation to get started.</p>
+        <h2 class="text-3xl mt-4">SMS has rerisen</h2>
+        <p class="text-lg text-orange-600">Select a conversation to get started</p>
       </div>
-      <div v-else class="flex flex-col h-full">
-        <h2 class="text-2xl p-4">{{ activeConversation.msisdn }}<span v-if="activeConversation.name != null"> ({{ activeConversation.name }})</span></h2>
+      <div v-else class="flex flex-col h-full text-orange-100">
+        <h2 class="text-2xl p-4 text-amber-600">{{ activeConversationMsisdn }}<span v-if="activeConversationName != null"> ({{ activeConversationName }})</span></h2>
         <div class="flex-grow overflow-y-auto flex flex-col h-full" ref="messages">
           <div v-for="(m, i) in activeConversation" class="flex flex-col p-4" :class="{ 'mt-auto': i === 0 }">
             <div v-if="m.direction === 'FROM_SUBSCRIBER'" class="flex flex-row-reverse">
               <div class="flex flex-col">
-                <div class="text-gray-200 text-xs max-w self-end">{{ new Date(m.timestamp).toLocaleTimeString() }}</div>
-                <div class="bg-orange-950 text-gray-300 p-2 rounded max-w-prose">{{ m.content }}</div>
+                <div class="text-orange-100 text-xs max-w self-end">{{ new Date(m.timestamp).toLocaleTimeString() }}</div>
+                <div class="bg-orange-950 text-orange-100 p-2 rounded max-w-prose">{{ m.content }}</div>
               </div>
             </div>
             <div v-else class="flex flex-row">
               <div class="flex flex-col">
-                <div class="text-gray-200 text-xs">{{ new Date(m.timestamp).toLocaleTimeString() }}</div>
-                <div class="bg-gray-800 text-gray-300 p-2 rounded max-w-prose">{{ m.content }}</div>
+                <div class="text-orange-100 text-xs">{{ new Date(m.timestamp).toLocaleTimeString() }}</div>
+                <div class="bg-gray-800 text-orange-100 p-2 rounded max-w-prose">{{ m.content }}</div>
               </div>
             </div>
           </div>
         </div>
         <form @submit.prevent="sendMessage" class="flex flex-row p-4 gap-1">
-          <input v-model="message" type="text" class="flex-grow bg-gray-800 text-gray-300 p-2 rounded" placeholder="Type a message...">
+          <input v-model="message" ref="message" type="text" class="message flex-grow bg-gray-800 text-orange-100 p-2 rounded" placeholder="Type a message...">
           <button class="bg-gray-800 text-gray-300 p-2 rounded">Send</button>
         </form>
       </div>
@@ -49,6 +52,7 @@ app.component("page-welcome", {
   data() {
     return {
       message: "",
+      newConversation: "",
       activeConversationMsisdn: null,
       msisdnToSmsMap: {},
     }
@@ -61,36 +65,46 @@ app.component("page-welcome", {
     activeConversation() {
       return this.msisdnToSmsMap[this.activeConversationMsisdn];
     },
+    activeConversationName() {
+      return null;
+    },
   },
   methods: {
+    createNewConversation() {
+      const msisdn = this.newConversation;
+      if (msisdn.trim() === "") {
+        return;
+      }
+      this.newConversation = "";
+      this.msisdnToSmsMap[msisdn] = this.msisdnToSmsMap[msisdn] ?? [];
+      this.setActive(msisdn);
+      this.$nextTick(() => { this.$refs["message"].focus() });
+    },
     registerWs() {
       const ws = new WebSocket(`ws://${window.location.host}/api/sms`);
+      // const ws = {};
       ws.onmessage = e => {
         const sms = JSON.parse(e.data);
-        const msisdn = this.getMsisdn(sms);
-        if (this.msisdnToSmsMap[msisdn] == null) {
-          this.msisdnToSmsMap[msisdn] = [];
-        }
-        const isActiveConversation = this.activeConversationMsisdn === msisdn;
+        const conversationMsisdn = this.getConversationMsisdn(sms);
+        const isActiveConversation = this.activeConversationMsisdn === conversationMsisdn;
         const isFromSubscriber = sms.direction === "FROM_SUBSCRIBER";
         if (isActiveConversation && isFromSubscriber) {
           return;
         }
-        this.msisdnToSmsMap[msisdn].push(sms);
-        if (this.activeConversationMsisdn === msisdn) {
-          setTimeout(() => { this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight; }, 0);
+        this.msisdnToSmsMap[conversationMsisdn] = [...(this.msisdnToSmsMap[conversationMsisdn] ?? []), sms];
+        if (this.activeConversationMsisdn === conversationMsisdn) {
+          this.$nextTick(() => { this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight; }, 0);
         }
       };
       ws.onclose = e => {
-        console.log("ws closed", e);
         setTimeout(() => { this.registerWs(); }, 1000);
       };
     },
-    getMsisdn(sms) {
+    getConversationMsisdn(sms) {
       if (sms.direction === "FROM_SUBSCRIBER") {
-        return sms.from.phoneNumber.e164;
+        return sms.to.phoneNumber.e164;
       }
-      return sms.to.phoneNumber.e164;
+      return sms.from.phoneNumber.e164;
     },
     isActive(msisdn) {
       return this.activeConversationMsisdn === msisdn;
