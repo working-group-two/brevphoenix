@@ -1,7 +1,6 @@
 package com.brevphoenix.sms
 
 import com.brevphoenix.GrpcShared
-import com.brevphoenix.PhoneNumber
 import com.wgtwo.api.v1.sms.SmsProto
 import com.wgtwo.api.v1.sms.SmsServiceGrpc
 import org.slf4j.LoggerFactory
@@ -30,9 +29,8 @@ object SmsSendService {
             SmsProto.SendMessageResponse.SendStatus.SEND_STATUS_REJECT,
             SmsProto.SendMessageResponse.SendStatus.SEND_STATUS_ERROR,
             SmsProto.SendMessageResponse.SendStatus.UNRECOGNIZED,
+                null,
             -> throw RuntimeException(response.description)
-
-            else -> throw RuntimeException(response.status.toString())
         }
     }
 }

@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit
 
 object GrpcShared {
 
-    val authInterceptor = AuthInterceptor(appConfig.apiClientId, appConfig.apiClientSecret)
+    val authInterceptor = AuthInterceptor(appConfig.oAuth.clientId, appConfig.oAuth.clientSecret)
 
     val channel: ManagedChannel = ManagedChannelBuilder.forAddress(appConfig.apiTarget, 443)
         .useTransportSecurity()
