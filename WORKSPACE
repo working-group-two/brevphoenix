@@ -47,14 +47,14 @@ maven_install(
     ],
 )
 
-rules_kotlin_version = "1.8"
+rules_kotlin_version = "1.9.6"
 
-rules_kotlin_sha = "01293740a16e474669aba5b5a1fe3d368de5832442f164e4fbfc566815a8bc3a"
+rules_kotlin_sha = "3b772976fec7bdcda1d84b9d39b176589424c047eb2175bed09aac630e50af43"
 
 http_archive(
     name = "rules_kotlin",
     sha256 = rules_kotlin_sha,
-    urls = ["https://github.com/bazelbuild/rules_kotlin/releases/download/v%s/rules_kotlin_release.tgz" % rules_kotlin_version],
+    urls = ["https://github.com/bazelbuild/rules_kotlin/releases/download/v1.9.6/rules_kotlin-v1.9.6.tar.gz"],
 )
 
 load("@rules_kotlin//kotlin:repositories.bzl", "kotlin_repositories")
