@@ -38,14 +38,14 @@ maven_install(
         "com.wgtwo.api:auth:0.0.3",
         "com.googlecode.libphonenumber:libphonenumber:8.13.14",
         "com.google.protobuf:protobuf-java-util:3.18.1",
+        "com.sksamuel.hoplite:hoplite-core:2.7.5",
+        "com.sksamuel.hoplite:hoplite-toml:2.7.5",
     ],
     repositories = [
         "https://maven.google.com",
         "https://repo1.maven.org/maven2",
     ],
 )
-
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 rules_kotlin_version = "1.8"
 

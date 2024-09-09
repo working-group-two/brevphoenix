@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.sksamuel.hoplite.ConfigLoaderBuilder
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.get
 import io.javalin.apibuilder.ApiBuilder.path
@@ -20,10 +21,23 @@ import io.javalin.json.JavalinJackson
 import io.javalin.validation.JavalinValidation
 import io.javalin.vue.VueComponent
 import org.eclipse.jetty.server.handler.ContextHandler.ApproveAliases
+import java.io.File
+import com.sksamuel.hoplite.PropertySource
+import com.sksamuel.hoplite.sources.EnvironmentVariablesPropertySource
 
-val appConfig: Config = Config()
+lateinit var appConfig: Config
 
-fun main() {
+fun main(args: Array<String>) {
+    appConfig = ConfigLoaderBuilder.default()
+        .addPropertySource(
+            EnvironmentVariablesPropertySource(
+                useUnderscoresAsSeparator = true,
+                allowUppercaseNames = true,
+            ),
+        )
+        .addPropertySources(args.reversed().map(::toPropertySource))
+        .build()
+        .loadConfigOrThrow()
 
     val app = Javalin.create { config ->
         config.staticFiles.add {
@@ -84,3 +98,5 @@ fun main() {
         },
     )
 }
+
+private fun toPropertySource(file: String) = PropertySource.file(File(file))
