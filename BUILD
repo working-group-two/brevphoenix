@@ -95,19 +95,12 @@ filegroup(
 
 kt_kotlinc_options(
     name = "kt_kotlinc_options",
-    jvm_target = "17",
-    x_no_param_assertions = True,
-)
-
-kt_javac_options(
-    name = "kt_javac_options",
-    warn = "off",
+    warn = "report",
 )
 
 define_kt_toolchain(
     name = "kotlin_toolchain",
     api_version = "1.9",
-    javac_options = "//:kt_javac_options",
     jvm_target = "21",
     kotlinc_options = "//:kt_kotlinc_options",
     language_version = "1.9",
