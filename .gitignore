@@ -12,3 +12,4 @@
 /.aswb/
 /.clwb/
 config/credentials.toml
+node_modules/
