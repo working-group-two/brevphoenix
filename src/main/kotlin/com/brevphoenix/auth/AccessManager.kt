@@ -57,17 +57,6 @@ object AccessManager {
 
 }
 
-private fun fileSessionHandler(): SessionHandler = SessionHandler().apply {
-    sessionCache = DefaultSessionCache(this).apply {
-        sessionDataStore = FileSessionDataStore().apply {
-            val baseDir = File(System.getProperty("java.io.tmpdir"))
-            this.storeDir = File(baseDir, "brevdue-session-store").apply { mkdir() }
-        }
-    }
-    sessionCookieConfig.isHttpOnly = true
-    sessionCookieConfig.isSecure = false // file session handler is only used for development
-}
-
 private fun databaseSessionHandler(dataSource: HikariDataSource): SessionHandler = SessionHandler().apply {
     sessionCache = NullSessionCache(this).apply {
         isSaveOnCreate = true
