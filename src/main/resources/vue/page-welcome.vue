@@ -158,6 +158,10 @@ app.component("page-welcome", {
     getSms() {
       axios.get("/api/sms").then(res => {
         this.msisdnToSmsMap = res.data;
+        const firstMsisdn = Object.keys(this.msisdnToSmsMap)[0];
+        if (firstMsisdn != null) {
+          this.setActive(firstMsisdn);
+        }
       });
     },
   },
