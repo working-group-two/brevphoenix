@@ -5,7 +5,9 @@
     <span v-if="lastMessage != null" class="message"><template v-if="lastMessage.direction === 'FROM_SUBSCRIBER'">You: </template>{{ lastMessage.content }}</span>
   </button>
 </template>
-<script>
+<script type="module">
+import { humanDate, humanTime } from "/js/time.js";
+
 app.component("conversation-item", {
   template: "#conversation-item",
   props: {
@@ -36,9 +38,9 @@ app.component("conversation-item", {
       const lastMessageDate = new Date(this.lastMessage.timestamp);
       const diff = new Date() - lastMessageDate;
       if (diff < 1000 * 60 * 60 * 24) {
-        return lastMessageDate.toLocaleTimeString();
+        return humanTime(lastMessageDate);
       }
-      return lastMessageDate.toLocaleDateString();
+      return humanDate(lastMessageDate);
     }
   },
 });
