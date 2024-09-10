@@ -1,5 +1,5 @@
 load("@rules_java//java:defs.bzl", "java_binary", "java_library", "java_test")
-load("@rules_kotlin//kotlin:core.bzl", "define_kt_toolchain", "kt_kotlinc_options")
+load("@rules_kotlin//kotlin:core.bzl", "define_kt_toolchain", "kt_javac_options", "kt_kotlinc_options")
 load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
 package(default_visibility = ["//visibility:public"])
@@ -102,5 +102,6 @@ define_kt_toolchain(
     name = "kotlin_toolchain",
     api_version = "1.9",
     jvm_target = "21",
+    kotlinc_options = "//:kt_kotlinc_options",
     language_version = "1.9",
 )
