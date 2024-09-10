@@ -15,7 +15,8 @@ sealed interface Address {
 }
 
 data class Sms(
-    val id: String,
+    val id: Long,
+    val eventId: String,
     val sub: String,
     val direction: Direction,
     val from: Address,

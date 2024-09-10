@@ -5,6 +5,7 @@ import com.brevphoenix.auth.Role
 import com.brevphoenix.auth.currentUser
 import com.brevphoenix.signin.SigninHandler
 import com.brevphoenix.sms.SmsController
+import com.brevphoenix.sms.SmsDatabaseHandler
 import com.brevphoenix.sms.SmsService
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -24,11 +25,12 @@ import org.eclipse.jetty.server.handler.ContextHandler.ApproveAliases
 import java.io.File
 import com.sksamuel.hoplite.PropertySource
 import com.sksamuel.hoplite.sources.EnvironmentVariablesPropertySource
+import org.jdbi.v3.core.Jdbi
 
-lateinit var appConfig: Config
+lateinit var config: Config
 
 fun main(args: Array<String>) {
-    appConfig = ConfigLoaderBuilder.default()
+    config = ConfigLoaderBuilder.default()
         .addPropertySource(
             EnvironmentVariablesPropertySource(
                 useUnderscoresAsSeparator = true,
@@ -38,6 +40,9 @@ fun main(args: Array<String>) {
         .addPropertySources(args.reversed().map(::toPropertySource))
         .build()
         .loadConfigOrThrow()
+
+
+    SmsDatabaseHandler.init()
 
     val app = Javalin.create { config ->
         config.staticFiles.add {
@@ -89,7 +94,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    app.start(appConfig.port)
+    app.start(config.port)
 
     Runtime.getRuntime().addShutdownHook(
         Thread {

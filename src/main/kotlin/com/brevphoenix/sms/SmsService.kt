@@ -2,12 +2,10 @@ package com.brevphoenix.sms
 
 import com.brevphoenix.PhoneNumber
 import org.slf4j.LoggerFactory
-import java.util.concurrent.ConcurrentHashMap
 
 object SmsService {
 
     private val logger by lazy { LoggerFactory.getLogger(javaClass) }
-    private val messages = ConcurrentHashMap<String, List<Sms>>()
 
     fun init() {
         SmsReceiverService.init()
@@ -18,13 +16,11 @@ object SmsService {
         return SmsSendService.sendFromSubscriber(from = from.e164, to = to.e164, text)
     }
 
-    fun getSms(phoneNumber: PhoneNumber): List<Sms> {
-        return messages[phoneNumber.e164] ?: emptyList()
-    }
+    fun getSms(phoneNumber: PhoneNumber) = SmsDatabaseHandler.getSmsForUser(phoneNumber.e164)
 
     fun handleObservedSms(sms: Sms) {
         val e164 = getSmsSubE164(sms) ?: return
-        messages.compute(e164) { _, list -> list?.plus(sms) ?: listOf(sms) }
+        SmsDatabaseHandler.insertSms(sms)
         SmsWsService.handleReceivedSms(e164, sms)
     }
 

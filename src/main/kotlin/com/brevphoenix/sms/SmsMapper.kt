@@ -29,7 +29,8 @@ object SmsMapper {
         logger.info("Sub: ${event.owner.sub} From: $from To: $to Direction: $direction")
 
         return Sms(
-            id = smsEvent.id,
+            id = -1,
+            eventId = smsEvent.id,
             sub = event.owner.sub,
             direction = direction,
             from = from,

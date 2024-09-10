@@ -7,9 +7,9 @@ import java.util.concurrent.TimeUnit
 
 object GrpcShared {
 
-    val authInterceptor = AuthInterceptor(appConfig.oAuth.clientId, appConfig.oAuth.clientSecret)
+    val authInterceptor = AuthInterceptor(config.oAuth.clientId, config.oAuth.clientSecret)
 
-    val channel: ManagedChannel = ManagedChannelBuilder.forAddress(appConfig.apiTarget, 443)
+    val channel: ManagedChannel = ManagedChannelBuilder.forAddress(config.apiTarget, 443)
         .useTransportSecurity()
         .keepAliveTime(30, TimeUnit.SECONDS)
         .keepAliveTimeout(10, TimeUnit.SECONDS)

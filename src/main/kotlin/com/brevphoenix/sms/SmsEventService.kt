@@ -22,7 +22,7 @@ object SmsEventService {
     fun addListener(listener: SmsReceiver) = listeners.add(listener)
 
     private fun handleSmsEvent(event: EventsProto.Event) {
-        val sms = SmsMapper.parseEvent(event)
+        val sms: Sms = SmsMapper.parseEvent(event)
         logger.info("Processing received SMS. sms.id=${sms.id}")
         listeners.forEach { smsReceiver ->
             try {

@@ -22,6 +22,10 @@ maven.install(
         "com.google.protobuf:protobuf-java-util:3.18.1",
         "com.sksamuel.hoplite:hoplite-core:2.7.5",
         "com.sksamuel.hoplite:hoplite-toml:2.7.5",
+        "org.jdbi:jdbi3-core:jar:3.45.4",
+        "org.postgresql:postgresql:42.7.2",
+        "com.zaxxer:HikariCP:jar:5.1.0",
+        "com.sksamuel.hoplite:hoplite-hikaricp:2.7.5",
     ],
     lock_file = "//:maven_install.json",  # to update: `REPIN=1 bazel run @maven//:pin`
 )
