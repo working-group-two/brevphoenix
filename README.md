@@ -1,5 +1,14 @@
 # Starter template for Kotlin Javalin in Bazel
 
+## Set up database
+
+```bash
+# start a docker postgres container
+docker run --name postgres -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 postgres
+# run the sql init script to create the database
+psql -h localhost -U postgres -f src/main/resources/sql/init.sql
+```
+
 ## Start the server
 
 ```bash
