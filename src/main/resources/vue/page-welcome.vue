@@ -33,23 +33,7 @@
         <h2 class="text-2xl p-4 text-amber-600">{{ activeConversationMsisdn }}<span
             v-if="activeConversationName != null"> ({{ activeConversationName }})</span></h2>
         <div class="flex-grow overflow-y-auto flex flex-col h-full" ref="messages">
-          <div v-for="(m, i) in activeConversation" class="flex flex-col p-4" :class="{ 'mt-auto': i === 0 }">
-            <div v-if="m.direction === 'FROM_SUBSCRIBER'" class="flex flex-row-reverse">
-              <div class="flex flex-col">
-                <div class="text-orange-100 text-xs max-w self-end">{{
-                    new Date(m.timestamp).toLocaleTimeString()
-                  }}
-                </div>
-                <div class="bg-orange-950 text-orange-100 p-2 rounded max-w-prose whitespace-pre">{{ m.content }}</div>
-              </div>
-            </div>
-            <div v-else class="flex flex-row">
-              <div class="flex flex-col">
-                <div class="text-orange-100 text-xs">{{ new Date(m.timestamp).toLocaleTimeString() }}</div>
-                <div class="bg-gray-800 text-orange-100 p-2 rounded max-w-prose whitespace-pre">{{ m.content }}</div>
-              </div>
-            </div>
-          </div>
+          <conversation :messages="activeConversation"></conversation>
         </div>
         <form @submit.prevent="sendMessage"
               class="flex flex-row p-4 gap-1">
