@@ -1,8 +1,15 @@
 port = 8080
+environment.name = "local"
 apiTarget = "api.wgtwo.com"
 
-[databaseApp]
-jdbcUrl = "jdbc:postgresql://localhost:5432/developer_portal_session"
+[appDatabase]
+jdbcUrl = "jdbc:postgresql://localhost:5432/brevphoenix"
+username = "brevphoenix"
+password = "password"
+maximumPoolSize = 6
+
+[sessionDatabase]
+jdbcUrl = "jdbc:postgresql://localhost:5432/brevphoenix_session"
 username = "brevphoenix"
 password = "password"
 maximumPoolSize = 6

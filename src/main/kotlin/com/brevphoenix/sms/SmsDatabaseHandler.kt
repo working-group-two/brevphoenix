@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
 object SmsDatabaseHandler {
 
     private val logger = LoggerFactory.getLogger(javaClass)
-    private val jdbi = Jdbi.create(config.databaseApp)
+    private val jdbi = Jdbi.create(config.appDatabase)
 
     init {
         init()

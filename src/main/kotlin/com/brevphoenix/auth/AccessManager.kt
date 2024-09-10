@@ -1,14 +1,20 @@
 package com.brevphoenix.auth
 
 import com.brevphoenix.PhoneNumber
+import com.brevphoenix.config
+import com.sksamuel.hoplite.env.Environment.Companion.local
+import com.zaxxer.hikari.HikariDataSource
 import io.javalin.http.Context
 import io.javalin.http.Handler
 import io.javalin.http.UnauthorizedResponse
 import io.javalin.security.RouteRole
 import io.javalin.websocket.WsConnectContext
 import io.javalin.websocket.WsContext
+import org.eclipse.jetty.server.session.DatabaseAdaptor
 import org.eclipse.jetty.server.session.DefaultSessionCache
 import org.eclipse.jetty.server.session.FileSessionDataStore
+import org.eclipse.jetty.server.session.JDBCSessionDataStoreFactory
+import org.eclipse.jetty.server.session.NullSessionCache
 import org.eclipse.jetty.server.session.SessionHandler
 import java.io.File
 
@@ -23,7 +29,7 @@ val WsContext.signedInUser: PhoneNumber get() = currentUser!!
 
 object AccessManager {
 
-    val sessionHandler = fileSessionHandler()
+    val sessionHandler = databaseSessionHandler(config.sessionDatabase)
 
     fun manage(handler: Handler, ctx: Context, permittedRoles: Set<RouteRole>) {
         when {
@@ -60,4 +66,22 @@ private fun fileSessionHandler(): SessionHandler = SessionHandler().apply {
     }
     sessionCookieConfig.isHttpOnly = true
     sessionCookieConfig.isSecure = false // file session handler is only used for development
+}
+
+private fun databaseSessionHandler(dataSource: HikariDataSource): SessionHandler = SessionHandler().apply {
+    sessionCache = NullSessionCache(this).apply {
+        isSaveOnCreate = true
+        isFlushOnResponseCommit = true
+        isRemoveUnloadableSessions = true
+        sessionDataStore = JDBCSessionDataStoreFactory().apply {
+            setDatabaseAdaptor(
+                DatabaseAdaptor().apply {
+                    this.datasource = dataSource
+                },
+            )
+        }.getSessionDataStore(sessionHandler)
+    }
+
+    sessionCookieConfig.isHttpOnly = true
+    sessionCookieConfig.isSecure = config.environment != local
 }
