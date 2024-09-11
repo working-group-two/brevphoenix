@@ -7,7 +7,7 @@
     <link href="/favicon.jpeg" rel="icon">
     <style>
         html, body {
-            min-height: 100%;
+            min-height: 100svh;
         }
 
         * {
@@ -20,12 +20,12 @@
     <script>const app = Vue.createApp({});</script>
     @componentRegistration
 </head>
-<body>
-<main id="main-vue" v-cloak>
-    @routeComponent
-</main>
-<script type="module">
-    app.mount("#main-vue");
-</script>
+<body class="flex">
+    <main id="main-vue" class="flex-1" v-cloak>
+        @routeComponent
+    </main>
+    <script type="module">
+        app.mount("#main-vue");
+    </script>
 </body>
 </html>
