@@ -61,6 +61,7 @@ app.component("page-welcome", {
       newConversation: "",
       activeConversationMsisdn: null,
       msisdnToSmsMap: {},
+      audioNotification: new Audio("/bip.mp3"),
     }
   },
   created() {
@@ -106,6 +107,10 @@ app.component("page-welcome", {
         if (this.activeConversationMsisdn === conversationMsisdn) {
           this.scrollToBottomOfMessages();
         }
+
+        this.audioNotification.play().catch(e => {
+          console.error("Failed to play audio notification, probably missing user interaction so far.", e);
+        });
       };
       ws.onclose = e => {
         setTimeout(() => {
