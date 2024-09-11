@@ -25,7 +25,7 @@
         <div class="flex flex-col max-w-lg items-center justify-center">
           <img src="/favicon.jpeg" alt="decorative phoenix" width="1024" height="1024"
                class="px-2 w-lg max-w-full rounded-3xl block">
-          <h2 class="text-3xl mt-4">SMS has rerisen</h2>
+          <h2 class="text-3xl mt-4">SMS has risen from the ashes</h2>
           <p class="text-lg text-orange-600">Select a conversation or create a new one</p>
         </div>
       </div>
@@ -93,7 +93,8 @@ app.component("page-welcome", {
       });
     },
     registerWs() {
-      const ws = new WebSocket(`ws://${window.location.host}/api/sms`);
+      const secureWebsocketOrNot = location.protocol === 'https:' ? 'wss' : 'ws';
+      const ws = new WebSocket(`${secureWebsocketOrNot}://${window.location.host}/api/sms`);
       // const ws = {};
       ws.onmessage = e => {
         const sms = JSON.parse(e.data);
