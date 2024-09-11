@@ -93,7 +93,8 @@ app.component("page-welcome", {
       });
     },
     registerWs() {
-      const ws = new WebSocket(`ws://${window.location.host}/api/sms`);
+      const secureWebsocketOrNot = location.protocol === 'https:' ? 'wss' : 'ws';
+      const ws = new WebSocket(`${secureWebsocketOrNot}://${window.location.host}/api/sms`);
       // const ws = {};
       ws.onmessage = e => {
         const sms = JSON.parse(e.data);
