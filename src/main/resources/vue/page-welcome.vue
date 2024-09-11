@@ -54,7 +54,9 @@
     </main>
   </div>
 </template>
-<script>
+<script type="module">
+import { burn } from "/js/fire.js";
+
 app.component("page-welcome", {
   template: "#page-welcome",
   data() {
@@ -120,6 +122,7 @@ app.component("page-welcome", {
         this.audioNotification.play().catch(e => {
           console.error("Failed to play audio notification, probably missing user interaction so far.", e);
         });
+        burn();
       };
       ws.onclose = e => {
         setTimeout(() => {
