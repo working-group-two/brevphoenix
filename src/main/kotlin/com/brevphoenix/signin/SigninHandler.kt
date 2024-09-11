@@ -43,13 +43,13 @@ object SigninHandler {
     fun validatePin(ctx: Context) {
         NaiveRateLimit.requestPerTimeUnit(ctx, 20, TimeUnit.HOURS)
         val pin = ctx.queryParam("pin")
-        val sentPin = ctx.consumeSessionAttribute<String>(PIN_KEY) ?: throw InternalServerErrorResponse()
-        val sentPinTime = ctx.consumeSessionAttribute<Instant>(PIN_TIME_KEY) ?: throw InternalServerErrorResponse()
+        val sentPin = ctx.consumeSessionAttribute<String>(PIN_KEY) ?: throw InternalServerErrorResponse("foo")
+        val sentPinTime = ctx.consumeSessionAttribute<Instant>(PIN_TIME_KEY) ?: throw InternalServerErrorResponse("baz")
         if (pin == sentPin && sentPinTime.durationAge() < Duration.ofHours(1)) {
             val phoneNumber = ctx.consumeSessionAttribute<PhoneNumber>(PHONE_NUMBER_KEY)!!
             AccessManager.signUserIn(ctx, phoneNumber)
         } else {
-            throw InternalServerErrorResponse()
+            throw InternalServerErrorResponse("bar")
         }
     }
 }

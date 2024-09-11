@@ -25,7 +25,6 @@ import org.eclipse.jetty.server.handler.ContextHandler.ApproveAliases
 import java.io.File
 import com.sksamuel.hoplite.PropertySource
 import com.sksamuel.hoplite.sources.EnvironmentVariablesPropertySource
-import org.jdbi.v3.core.Jdbi
 
 lateinit var config: Config
 
