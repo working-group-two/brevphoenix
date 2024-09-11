@@ -9,14 +9,16 @@
                class="bg-orange-400 outline-amber-400 placeholder-amber-800 text-amber-950 rounded p-2 block w-full"
                placeholder="New conversation">
       </form>
-      <conversation-item
-          v-for="(conversation, msisdnOrText) in msisdnToSmsMap"
-          @click="setActive(msisdnOrText)"
-          :key="msisdnOrText"
-          :msisdn="msisdnOrText"
-          :last-message="conversation.at(-1)"
-          :active="isActive(msisdnOrText)"
-      ></conversation-item>
+      <transition-group name="conversation-list">
+        <conversation-item
+            v-for="[msisdnOrText, conversation] in sortedConversations"
+            :key="msisdnOrText"
+            :msisdn="msisdnOrText"
+            :last-message="conversation.at(-1)"
+            :active="isActive(msisdnOrText)"
+            @click="setActive(msisdnOrText)"
+        ></conversation-item>
+      </transition-group>
     </nav>
     <main class="flex-grow bg-gradient-to-tl to-black from-amber-700">
       <div v-if="activeConversationMsisdn == null"
@@ -77,6 +79,12 @@ app.component("page-welcome", {
     },
     normalizedNewConversationMsisdn() {
       return "+" + this.newConversation.replace(/[^0-9]/g, "");
+    },
+    sortedConversations() {
+      return Object.entries(this.msisdnToSmsMap)
+          .toSorted(([aMsisdn, aMessages], [bMsisdn, bMessages]) => (
+              bMessages.at(-1).timestamp.localeCompare(aMessages.at(-1).timestamp))
+          );
     },
   },
   methods: {
@@ -164,9 +172,9 @@ app.component("page-welcome", {
     getSms() {
       axios.get("/api/sms").then(res => {
         this.msisdnToSmsMap = res.data;
-        const firstMsisdn = Object.keys(this.msisdnToSmsMap)[0];
-        if (firstMsisdn != null) {
-          this.setActive(firstMsisdn);
+        const firstConversation = this.sortedConversations[0];
+        if (firstConversation != null) {
+          this.setActive(firstConversation[0]);
         }
       });
     },
@@ -188,6 +196,22 @@ nav {
 
 h1 {
   color: hsl(var(--bg-color-deg) 50% 80% / 1);
+}
+
+.conversation-list-enter-active,
+.conversation-list-leave-active,
+.conversation-list-move {
+  transition: all 0.5s ease;
+}
+
+.conversation-list-leave-active {
+  position: absolute;
+}
+
+.conversation-list-enter-from,
+.conversation-list-leave-to {
+  opacity: 0;
+  transform: translateX(-100%);
 }
 
 ::-webkit-scrollbar {
