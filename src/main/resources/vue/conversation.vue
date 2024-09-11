@@ -4,7 +4,7 @@
       <div v-if="message.direction === 'FROM_SUBSCRIBER'" class="flex flex-row-reverse">
         <div class="flex flex-col">
           <div class="text-orange-100 text-xs max-w self-end mb-1">{{ dateTime(message.timestamp) }}</div>
-          <div class="bg-orange-950 text-orange-100 p-3 rounded-lg max-w-prose whitespace-pre leading-4">
+          <div class="bg-orange-950 text-orange-100 p-3 rounded-lg max-w-prose whitespace-break-spaces leading-4">
             {{ message.content }}
           </div>
         </div>
