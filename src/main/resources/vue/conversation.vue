@@ -12,7 +12,7 @@
       <div v-else class="flex flex-row">
         <div class="flex flex-col">
           <div class="text-orange-100 text-xs mb-1">{{ dateTime(message.timestamp) }}</div>
-          <div class="bg-gray-800 text-orange-100 p-3 rounded-lg max-w-prose whitespace-pre leading-4">
+          <div class="bg-gray-800 text-orange-100 p-3 rounded-lg max-w-prose whitespace-break-spaces leading-4">
             {{ message.content }}
           </div>
         </div>
