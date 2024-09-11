@@ -1,4 +1,15 @@
 export function burn(ms = 400) {
+    const wrapper = document.createElement("div");
+    wrapper.style.cssText = `
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    `;
     const el = document.createElement("div");
     el.style.cssText = `
         position: absolute;
@@ -16,12 +27,8 @@ export function burn(ms = 400) {
     ];
     const timing = { duration: ms, iterations: 1 };
 
-    const overflow = document.documentElement.style.overflow;
-    document.documentElement.style.overflow = "hidden";
-    document.documentElement.append(el);
+    wrapper.append(el);
+    document.documentElement.append(wrapper);
     el.animate(keyframes, timing);
-    setTimeout(() => {
-        el.remove();
-        document.documentElement.style.overflow = overflow;
-    }, 1.5 * ms);
+    setTimeout(() => wrapper.remove(), 1.5 * ms);
 }
