@@ -139,9 +139,11 @@ app.component("page-welcome", {
       this.scrollToBottomOfMessages();
     },
     scrollToBottomOfMessages() {
-      this.$nextTick(() => {
+      const method = () => {
         this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight;
-      }, 0);
+      };
+      this.$nextTick(method);
+      setTimeout(method, 10);
     },
     sendMessage() {
       if (this.message.trim() === "") {
