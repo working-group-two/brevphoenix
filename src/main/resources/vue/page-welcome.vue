@@ -20,7 +20,7 @@
         ></conversation-item>
       </transition-group>
     </nav>
-    <main class="flex-grow bg-gradient-to-tl to-black from-amber-700">
+    <main class="flex-grow bg-gradient-to-tl to-black from-amber-700 max-h-svh">
       <conversation-empty-state v-if="activeConversationMsisdn == null"></conversation-empty-state>
       <div v-else class="flex flex-col h-full text-orange-100">
         <h2 class="text-2xl p-4 text-amber-600">{{ activeConversationMsisdn }}<span
