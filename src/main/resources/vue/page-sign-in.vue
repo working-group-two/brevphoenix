@@ -11,7 +11,7 @@
           autocomplete="tel"
           key="phone"
       >
-      <button :disabled="sendingPin" class="rounded p-2 bg-amber-800">Send pin</button>
+      <button :disabled="sendingPin" class="rounded p-2 bg-amber-800">Send code</button>
     </form>
     <form v-if="pinSent" @submit.prevent="validatePin" class="flex flex-col gap-2">
       <p>PIN sent to {{ phoneNumber }}</p>
@@ -49,7 +49,7 @@ app.component("page-sign-in", {
       }).catch(err => {
         const message = err.response.status === 401
             ? "You are not authorized to sign in"
-            : "Failed to send PIN to your number, please try again.";
+            : "Failed to send code to your number, please try again.";
         alert(message);
       }).finally(() => this.sendingPin = false)
     },
@@ -60,7 +60,7 @@ app.component("page-sign-in", {
         setTimeout(() => location.href = "/", 1000);
       }).catch(() => {
         this.validatingPin = false;
-        alert("Failed to validate your PIN, please start over.")
+        alert("Failed to validate your code, please start over.")
         this.resetForm();
       });
     },

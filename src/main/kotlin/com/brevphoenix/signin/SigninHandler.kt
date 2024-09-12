@@ -38,7 +38,7 @@ object SigninHandler {
         }
     }
 
-    private fun getSmsContent(randomPin: String) = "$randomPin is your BrevPhoenix auth code"
+    private fun getSmsContent(randomPin: String) = "$randomPin is your BrevPhoenix code"
 
     fun validatePin(ctx: Context) {
         NaiveRateLimit.requestPerTimeUnit(ctx, 20, TimeUnit.HOURS)
