@@ -7,6 +7,7 @@ import io.javalin.http.pathParamAsClass
 import io.javalin.websocket.WsCloseContext
 import io.javalin.websocket.WsConnectContext
 import io.javalin.websocket.WsContext
+import io.javalin.websocket.WsErrorContext
 
 object SmsController {
 
@@ -42,5 +43,10 @@ object SmsController {
     fun handleWsClose(ctx: WsContext) {
         val e164 = ctx.signedInUser.e164
         SmsWsService.handleWsClose(ctx as WsCloseContext, e164)
+    }
+
+    fun handleWsError(ctx: WsContext) {
+        val e164 = ctx.signedInUser.e164
+        SmsWsService.handleWsError(ctx as WsErrorContext, e164)
     }
 }

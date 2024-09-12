@@ -20,8 +20,9 @@ object SmsService {
 
     fun handleObservedSms(sms: Sms) {
         val e164 = getSmsSubE164(sms) ?: return
-        SmsDatabaseHandler.insertSms(sms)
-        SmsWsService.handleReceivedSms(e164, sms)
+        val id = SmsDatabaseHandler.insertSms(sms)
+        val smsWithId = sms.copy(id = id)
+        SmsWsService.handleReceivedSms(e164, smsWithId)
     }
 
     fun getSmsSubE164(sms: Sms): String? {

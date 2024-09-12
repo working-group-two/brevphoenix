@@ -57,6 +57,7 @@ app.component("page-welcome", {
       activeConversationMsisdn: null,
       msisdnToSmsMap: {},
       audioNotification: new Audio("/bip.mp3"),
+      lastSentMessage: null,
     }
   },
   created() {
@@ -102,7 +103,10 @@ app.component("page-welcome", {
         const conversationMsisdn = this.getConversationMsisdn(sms);
         const isActiveConversation = this.activeConversationMsisdn === conversationMsisdn;
         const isFromSubscriber = sms.direction === "FROM_SUBSCRIBER";
-        if (isActiveConversation && isFromSubscriber) {
+        const lastSmsInConversation = this.msisdnToSmsMap[conversationMsisdn].at(-1);
+        const contentIsTheSame = lastSmsInConversation?.content === sms.content;
+        const isWithinLastFewSeconds = lastSmsInConversation != null && new Date(sms.timestamp) - new Date(lastSmsInConversation.timestamp) < 4000;
+        if (isActiveConversation && isFromSubscriber && contentIsTheSame && isWithinLastFewSeconds) {
           return;
         }
         this.msisdnToSmsMap[conversationMsisdn] = [...(this.msisdnToSmsMap[conversationMsisdn] ?? []), sms];
@@ -146,12 +150,13 @@ app.component("page-welcome", {
       const id = window.crypto.randomUUID();
       const to = this.activeConversationMsisdn;
       const content = this.message;
-      this.activeConversation.push({
+      this.lastSentMessage = {
         id,
         timestamp: new Date().toISOString(),
         content,
         direction: "FROM_SUBSCRIBER",
-      });
+      };
+      this.activeConversation.push(this.lastSentMessage);
       this.scrollToBottomOfMessages();
       this.message = "";
       axios.post(`/api/sms/${to}`, content)

@@ -6,14 +6,18 @@ import io.javalin.websocket.WsContext
 import java.util.concurrent.ConcurrentHashMap
 
 object SmsWsService {
-    private val connectedWsUsers = ConcurrentHashMap<String, WsContext>()
+    private val connectedWsUsers = ConcurrentHashMap<String, ConcurrentHashMap<String, WsContext>>()
 
     fun handleWsConnect(ctx: WsConnectContext, e164: String) {
-        connectedWsUsers[e164] = ctx
+        connectedWsUsers.computeIfAbsent(e164) { ConcurrentHashMap() }[ctx.sessionId] = ctx
     }
 
     fun handleWsClose(ctx: WsCloseContext, e164: String) {
-        connectedWsUsers.remove(e164)
+        connectedWsUsers[e164]?.remove(ctx.sessionId)
+    }
+
+    fun handleWsError(ctx: WsContext, e164: String) {
+        connectedWsUsers[e164]?.remove(ctx.sessionId)
     }
 
     fun handleReceivedSms(e164: String, sms: Sms) {
@@ -21,6 +25,8 @@ object SmsWsService {
     }
 
     private fun sendToAnyConnectedWsUser(e164: String, sms: Sms) {
-        connectedWsUsers[e164]?.send(sms)
+        connectedWsUsers[e164]?.values?.forEach { ctx ->
+            ctx.send(sms)
+        }
     }
 }

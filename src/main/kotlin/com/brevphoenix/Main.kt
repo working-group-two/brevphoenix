@@ -88,6 +88,7 @@ fun main(args: Array<String>) {
                 ws("/", { ws ->
                     ws.onConnect(SmsController::handleWsConnect)
                     ws.onClose(SmsController::handleWsClose)
+                    ws.onError(SmsController::handleWsError)
                 }, Role.SIGNED_IN)
             }
         }
