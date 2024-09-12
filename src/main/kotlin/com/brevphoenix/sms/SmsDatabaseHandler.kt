@@ -73,7 +73,18 @@ RETURNING id;
     }
 
     fun getSmsForUser(e164: String): List<Sms> = jdbi.withHandle<List<Sms>, Exception> {
-        it.createQuery("SELECT * FROM sms WHERE from_number = :e164 OR to_number = :e164")
+        it.createQuery("""
+SELECT
+    *
+FROM sms
+WHERE
+    (from_number = :e164 AND direction_from_subscriber = true)
+    OR
+    (to_number = :e164 AND direction_from_subscriber = false)
+    OR
+    (from_number = :e164 AND to_number = :e164)
+order by timestamp;
+""".trimIndent())
             .bind("e164", e164)
             .map { rs, _ ->
                 Sms(
