@@ -52,6 +52,7 @@ object SmsEventService {
             }
 
             override fun onError(throwable: Throwable) {
+                Thread.sleep(1000)
                 logger.warn("Got error: ${throwable.message}")
                 subscribe()
             }
@@ -62,7 +63,7 @@ object SmsEventService {
             }
 
             private fun subscribe() {
-                val newRequest = request.newBuilderForType().build()
+                val newRequest: EventsProto.SubscribeEventsRequest = subscribeEventsRequest()
                 val newStreamObserver = streamObserver(newRequest)
                 stub.subscribe(newRequest, newStreamObserver)
             }
