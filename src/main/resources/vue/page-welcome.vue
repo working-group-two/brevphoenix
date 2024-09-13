@@ -1,6 +1,6 @@
 <template id="page-welcome">
   <div class="page-welcome h-svh w-full text-gray-300">
-    <nav class="flex flex-col h-full overflow-y-auto">
+    <nav class="flex flex-col h-full">
       <h1 class="text-2xl text-orange-600 p-4">
         <button @click="activeConversationMsisdn = null">BrevPhoenix</button>
       </h1>
@@ -10,16 +10,18 @@
                placeholder="+47 999 00 111">
         <button class="bg-orange-800 text-orange-100 p-2 rounded">Create</button>
       </form>
-      <transition-group name="conversation-list">
-        <conversation-item
-            v-for="[msisdnOrText, conversation] in sortedConversations"
-            :key="msisdnOrText"
-            :msisdn="msisdnOrText"
-            :last-message="conversation.at(-1)"
-            :active="isActive(msisdnOrText)"
-            @click="setActive(msisdnOrText)"
-        ></conversation-item>
-      </transition-group>
+      <div class="overflow-y-auto flex flex-col">
+        <transition-group name="conversation-list">
+          <conversation-item
+              v-for="[msisdnOrText, conversation] in sortedConversations"
+              :key="msisdnOrText"
+              :msisdn="msisdnOrText"
+              :last-message="conversation.at(-1)"
+              :active="isActive(msisdnOrText)"
+              @click="setActive(msisdnOrText)"
+          ></conversation-item>
+        </transition-group>
+      </div>
     </nav>
     <main class="flex-grow bg-gradient-to-tl from-black to-stone-700 h-svh">
       <conversation-empty-state v-if="activeConversationMsisdn == null"></conversation-empty-state>
@@ -46,7 +48,7 @@
   </div>
 </template>
 <script type="module">
-import { burn } from "/js/fire.js";
+import {burn} from "/js/fire.js";
 
 app.component("page-welcome", {
   template: "#page-welcome",
@@ -228,12 +230,12 @@ h1 {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--bg-color-deg) 30% 1% / .5);
+  background: #555;
   border-radius: 5px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #777;
 }
 </style>
