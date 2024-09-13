@@ -30,7 +30,7 @@ object SigninHandler {
         val smsContent = getSmsContent(randomPin)
         try {
             logger.info("Sending SMS to $phoneNumber: $smsContent")
-            SmsSendService.sendFromSubscriber(from = phoneNumber.e164, to = phoneNumber.e164, smsContent)
+            SmsSendService.sendToSubscriber(from = "BrevPhoenix", to = phoneNumber.e164, smsContent)
             ctx.status(200)
         } catch (e: Exception) {
             logger.error("Error sending PIN", e)

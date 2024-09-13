@@ -33,4 +33,27 @@ object SmsSendService {
             -> throw RuntimeException(response.description)
         }
     }
+
+    fun sendToSubscriber(from: String, to: String, content: String) {
+        val request = SmsProto.SendTextToSubscriberRequest.newBuilder().apply {
+            this.fromAddress = from
+            this.toSubscriber = to
+            this.content = content
+        }.build()
+
+        sendTextToSubscriber(request)
+    }
+
+    private fun sendTextToSubscriber(request: SmsProto.SendTextToSubscriberRequest): String {
+        val response = smsStub.sendTextToSubscriber(request)
+        when (response.status) {
+            SmsProto.SendMessageResponse.SendStatus.SEND_STATUS_OK -> return response.messageId
+            SmsProto.SendMessageResponse.SendStatus.SEND_STATUS_UNSPECIFIED,
+            SmsProto.SendMessageResponse.SendStatus.SEND_STATUS_REJECT,
+            SmsProto.SendMessageResponse.SendStatus.SEND_STATUS_ERROR,
+            SmsProto.SendMessageResponse.SendStatus.UNRECOGNIZED,
+                null,
+            -> throw RuntimeException(response.description)
+        }
+    }
 }
