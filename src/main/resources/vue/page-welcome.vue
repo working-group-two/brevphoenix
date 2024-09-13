@@ -28,7 +28,7 @@
       <div v-else class="flex flex-col h-full text-orange-100">
         <h2 class="text-2xl p-4 text-orange-600">{{ activeConversationMsisdn }}<span
             v-if="activeConversationName != null"> ({{ activeConversationName }})</span></h2>
-        <div class="flex-grow overflow-y-auto flex flex-col h-full" ref="messages">
+        <div class="flex-grow overflow-y-auto flex flex-col h-full justify-end" ref="messages">
           <conversation :messages="activeConversation"></conversation>
         </div>
         <form @submit.prevent="sendMessage"
