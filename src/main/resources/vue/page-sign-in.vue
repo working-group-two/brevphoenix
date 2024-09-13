@@ -14,6 +14,7 @@
           placeholder="+47 999 12 345"
           type="tel"
           autocomplete="tel"
+          required
           key="phone"
       >
       <input
@@ -25,6 +26,7 @@
           autocomplete="off"
           key="pin"
           maxlength="4"
+          required
           :disabled="validatingPin"
       >
       <button v-if="!pinSent" :disabled="sendingPin"

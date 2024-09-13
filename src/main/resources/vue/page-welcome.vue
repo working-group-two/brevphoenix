@@ -1,13 +1,13 @@
 <template id="page-welcome">
   <div class="page-welcome h-svh w-full text-gray-300">
     <nav class="flex flex-col h-full overflow-y-auto">
-      <h1 class="text-2xl text-orange-700 p-4">
+      <h1 class="text-2xl text-orange-600 p-4">
         <button @click="activeConversationMsisdn = null">BrevPhoenix</button>
       </h1>
       <form @submit.prevent="createNewConversation" class="p-4 flex flex-row gap-2">
         <input v-model.trim="newConversation" type="tel"
-               class="bg-orange-100 outline-amber-400 placeholder-amber-800 text-amber-950 rounded p-2 block w-full"
-               placeholder="New conversation">
+               class="bg-orange-100 outline-amber-400 placeholder-stone-400 text-amber-950 rounded p-2 block w-full"
+               placeholder="+47 999 00 111">
         <button class="bg-orange-800 text-orange-100 p-2 rounded">Create</button>
       </form>
       <transition-group name="conversation-list">
@@ -30,17 +30,16 @@
           <conversation :messages="activeConversation"></conversation>
         </div>
         <form @submit.prevent="sendMessage"
-              class="flex flex-row p-4 gap-1">
-
+              class="flex flex-row p-4 gap-2">
           <textarea v-model="message" ref="message" type="text"
                     @keydown.enter.shift.exact.prevent="message += '\n'"
                     @keydown.prevent.ctrl.enter="sendMessage"
                     @keydown.prevent.meta.enter="sendMessage"
                     @keydown.prevent.exact.enter="sendMessage"
-                    class="message flex-grow bg-gray-800 text-orange-100 p-2 rounded"
-                    placeholder="Type a message..."
+                    class="message flex-grow bg-stone-600 text-orange-100 placeholder:text-orange-50 p-2 rounded"
+                    placeholder="Text message"
           ></textarea>
-          <button class="bg-gray-800 text-gray-300 p-2 rounded">Send</button>
+          <button class="bg-stone-600 text-gray-300 p-2 rounded h-full">Send</button>
         </form>
       </div>
     </main>

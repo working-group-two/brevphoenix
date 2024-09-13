@@ -1,7 +1,6 @@
 <template id="conversation-empty-state">
   <div
-      class="flex flex-col items-center justify-center overflow-y-auto h-full text-stone-400"
-      style="background: hsl(var(--bg-color-deg) 50% 2% / 1);"
+      class="flex flex-col items-center justify-center overflow-y-auto h-full text-stone-400 to-stone-900 from-amber-950 bg-gradient-to-t"
   >
     <div class="flex flex-col max-w-lg items-center justify-center">
       <img src="/favicon.jpeg" alt="decorative phoenix" width="1024" height="1024"

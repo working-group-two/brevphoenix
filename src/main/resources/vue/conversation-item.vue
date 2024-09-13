@@ -1,5 +1,5 @@
 <template id="conversation-item">
-  <button class="conversation-item grid text-orange-200 p-4 hover:bg-orange-950" :class="{ active }" @click="$emit('click', msisdn)">
+  <button class="conversation-item grid text-orange-200 p-4 hover:bg-stone-600" :class="{ 'bg-orange-800': active }" @click="$emit('click', msisdn)">
     <span class="msisdn">{{ msisdn }}<span v-if="name != null" class="text-gray-400 text-sm"> ({{ name }})</span></span>
     <span v-if="lastMessage != null" class="time justify-self-end text-xs text-gray-400">{{ timeAgo }}</span>
     <span v-if="lastMessage != null" class="message"><template v-if="lastMessage.direction === 'FROM_SUBSCRIBER'">You: </template>{{ lastMessage.content }}</span>
@@ -53,10 +53,6 @@ app.component("conversation-item", {
         "msisdn time"
         "message time";
   text-align: left;
-}
-
-.conversation-item.active {
-  background: hsl(var(--bg-color-deg) 50% 20%);
 }
 
 .conversation-item > * {
