@@ -6,10 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/favicon.jpeg" rel="icon">
     <style>
-        html, body {
-            min-height: 100svh;
-        }
-
         * {
             box-sizing: border-box;
         }
@@ -20,10 +16,10 @@
     <script>const app = Vue.createApp({});</script>
     @componentRegistration
 </head>
-<body class="flex">
-    <main id="main-vue" class="flex-1" v-cloak>
+<body>
+    <div id="main-vue" v-cloak>
         @routeComponent
-    </main>
+    </div>
     <script type="module">
         app.mount("#main-vue");
     </script>

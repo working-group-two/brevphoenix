@@ -1,22 +1,24 @@
 <template id="page-sign-in">
-  <div class="page-sign-in h-full w-full grid place-content-center bg-amber-950 text-orange-100">
-    <img src="/favicon.jpeg" alt="decorative phoenix" width="1024" height="1024" class="max-w-lg rounded-3xl block">
-    <h1 class="text-2xl p-4 text-center">Sign in to BrevPhoenix—SMS is back</h1>
-    <form v-if="!pinSent" class="flex flex-col gap-2" @submit.prevent="sendPin">
+  <div class="page-sign-in min-h-svh flex items-center sm:justify-center bg-stone-900 text-orange-100 sm:p-2 p-10 flex-col sm:flex-row sm:gap-20 gap-10">
+    <div class="max-w-sm sm:h-auto min-h-80 flex flex-col gap-2">
+      <img src="/favicon.jpeg" alt="decorative phoenix" width="1024" height="1024" class="max-w-full rounded-3xl block">
+      <h1 class="text-4xl font-bold">BrevPhoenix</h1>
+    </div>
+    <form class="flex flex-col gap-4 grow-0 sm:w-56 w-full" @submit.prevent="() => { !pinSent ? sendPin() : validatePin()}">
+      <h2 class="text-2xl">Sign in</h2>
+      <p v-if="pinSent">Code sent to {{ phoneNumber }}</p>
       <input
-          class="rounded p-2 text-gray-950 bg-amber-100"
+          v-if="!pinSent"
+          class="rounded p-2 text-gray-950 bg-amber-50"
           v-model="phoneNumber"
-          placeholder="+999 12 345"
+          placeholder="+47 999 12 345"
           type="tel"
           autocomplete="tel"
           key="phone"
       >
-      <button :disabled="sendingPin" class="rounded p-2 bg-amber-800">Send code</button>
-    </form>
-    <form v-if="pinSent" @submit.prevent="validatePin" class="flex flex-col gap-2">
-      <p>PIN sent to {{ phoneNumber }}</p>
       <input
-          class="rounded p-2 text-gray-950 bg-amber-100"
+          v-if="pinSent"
+          class="rounded p-2 text-gray-950 bg-amber-50"
           v-model="pin"
           placeholder="1234"
           type="tel"
@@ -25,8 +27,15 @@
           maxlength="4"
           :disabled="validatingPin"
       >
-      <button :disabled="validatingPin" class="rounded p-2 bg-amber-800">Verify</button>
-      <button @click="resetForm" class="">Go back</button>
+      <button v-if="!pinSent" :disabled="sendingPin"
+              class="rounded p-2 bg-orange-700 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none">
+        Send code
+      </button>
+      <button v-if="pinSent" :disabled="validatingPin"
+              class="rounded p-2 bg-orange-700 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none">
+        Verify
+      </button>
+      <button v-if="pinSent" @click="resetForm" :disabled="validatingPin" class="">Go back</button>
     </form>
   </div>
 </template>

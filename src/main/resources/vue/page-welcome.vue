@@ -1,13 +1,14 @@
 <template id="page-welcome">
-  <div class="page-welcome h-full w-full text-gray-300">
-    <nav class="flex flex-col h-full">
-      <h1 class="text-2xl text-orange-600 p-4">
+  <div class="page-welcome h-svh w-full text-gray-300">
+    <nav class="flex flex-col h-full overflow-y-auto">
+      <h1 class="text-2xl text-orange-700 p-4">
         <button @click="activeConversationMsisdn = null">BrevPhoenix</button>
       </h1>
-      <form @submit.prevent="createNewConversation" class="p-4">
+      <form @submit.prevent="createNewConversation" class="p-4 flex flex-row gap-2">
         <input v-model.trim="newConversation" type="tel"
-               class="bg-orange-400 outline-amber-400 placeholder-amber-800 text-amber-950 rounded p-2 block w-full"
+               class="bg-orange-100 outline-amber-400 placeholder-amber-800 text-amber-950 rounded p-2 block w-full"
                placeholder="New conversation">
+        <button class="bg-orange-800 text-orange-100 p-2 rounded">Create</button>
       </form>
       <transition-group name="conversation-list">
         <conversation-item
@@ -20,10 +21,10 @@
         ></conversation-item>
       </transition-group>
     </nav>
-    <main class="flex-grow bg-gradient-to-tl to-black from-amber-700 max-h-svh">
+    <main class="flex-grow bg-gradient-to-tl from-black to-stone-700 h-svh">
       <conversation-empty-state v-if="activeConversationMsisdn == null"></conversation-empty-state>
       <div v-else class="flex flex-col h-full text-orange-100">
-        <h2 class="text-2xl p-4 text-amber-600">{{ activeConversationMsisdn }}<span
+        <h2 class="text-2xl p-4 text-orange-600">{{ activeConversationMsisdn }}<span
             v-if="activeConversationName != null"> ({{ activeConversationName }})</span></h2>
         <div class="flex-grow overflow-y-auto flex flex-col h-full" ref="messages">
           <conversation :messages="activeConversation"></conversation>
