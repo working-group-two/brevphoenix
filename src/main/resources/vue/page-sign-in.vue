@@ -1,5 +1,5 @@
 <template id="page-sign-in">
-  <div class="page-sign-in min-h-svh flex items-center sm:justify-center bg-stone-900 text-orange-100 sm:p-2 p-10 flex-col sm:flex-row sm:gap-20 gap-10">
+  <div class="page-sign-in min-h-svh flex items-center sm:justify-center to-stone-900 from-amber-950 bg-gradient-to-t text-orange-100 sm:p-2 p-10 flex-col sm:flex-row sm:gap-20 gap-10">
     <div class="max-w-sm sm:h-auto min-h-80 flex flex-col gap-2">
       <img src="/favicon.jpeg" alt="decorative phoenix" width="1024" height="1024" class="max-w-full rounded-3xl block">
       <h1 class="text-4xl font-bold">BrevPhoenix</h1>
