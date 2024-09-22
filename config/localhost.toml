@@ -10,6 +10,10 @@ maximumPoolSize = 6
 
 [sessionDatabase]
 jdbcUrl = "jdbc:postgresql://localhost:5432/brevphoenix_session"
-username = "brevphoenix"
+username = "brevphoenix_session"
 password = "password"
 maximumPoolSize = 6
+
+[databaseKeyPairConfig]
+privateKeyFile = "config/private_key.txt"
+publicKeyFile = "config/public_key.txt"

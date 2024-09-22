@@ -9,6 +9,8 @@ object SmsDatabaseHandler {
 
     private val logger = LoggerFactory.getLogger(javaClass)
     private val jdbi = Jdbi.create(config.appDatabase)
+    private val privateKey = config.databaseKeyPairConfig.privateKeyFile.readText()
+    private val publicKey = config.databaseKeyPairConfig.publicKeyFile.readText()
 
     init {
         init()
@@ -28,7 +30,7 @@ CREATE TABLE IF NOT EXISTS sms (
     to_number TEXT NOT NULL,
     to_number_type TEXT NOT NULL,
     direction_from_subscriber boolean NOT NULL,
-    text TEXT NOT NULL,
+    text BYTEA NOT NULL,
     timestamp TIMESTAMP NOT NULL
 );
 """.trimIndent()
@@ -41,8 +43,28 @@ CREATE TABLE IF NOT EXISTS sms (
     ): Long = jdbi.withHandle<Long, Exception> {
         it.createUpdate(
             """
-INSERT INTO sms (eventId, sub, from_number, from_number_type, to_number, to_number_type, direction_from_subscriber, text, timestamp)
-VALUES (:eventId, :sub, :from_number, :from_number_type, :to_number, :to_number_type, :direction_from_subscriber, :text, :timestamp)
+INSERT INTO sms (
+    eventId,
+    sub,
+    from_number,
+    from_number_type,
+    to_number,
+    to_number_type,
+    direction_from_subscriber,
+    text,
+    timestamp
+)
+VALUES (
+    :eventId,
+    :sub,
+    :from_number,
+    :from_number_type,
+    :to_number,
+    :to_number_type,
+    :direction_from_subscriber,
+    pgp_pub_encrypt(:text, dearmor(:public_key)),
+    :timestamp
+)
 RETURNING id;
 """.trimIndent()
         )
@@ -67,6 +89,7 @@ RETURNING id;
             .bind("direction_from_subscriber", sms.direction == Sms.Direction.FROM_SUBSCRIBER)
             .bind("text", sms.content)
             .bind("timestamp", sms.timestamp)
+            .bind("public_key", publicKey)
             .executeAndReturnGeneratedKeys()
             .mapTo(Long::class.java)
             .one()
@@ -75,7 +98,8 @@ RETURNING id;
     fun getSmsForUser(e164: String): List<Sms> = jdbi.withHandle<List<Sms>, Exception> {
         it.createQuery("""
 SELECT
-    *
+    *,
+    pgp_pub_decrypt(text, dearmor(:private_key), :passphrase) as unencrypted_text
 FROM sms
 WHERE
     (from_number = :e164 AND direction_from_subscriber = true)
@@ -86,6 +110,8 @@ WHERE
 order by timestamp;
 """.trimIndent())
             .bind("e164", e164)
+            .bind("private_key", privateKey)
+            .bind("passphrase", config.databaseKeyPairConfig.password ?: "")
             .map { rs, _ ->
                 Sms(
                     id = rs.getLong("id"),
@@ -106,7 +132,7 @@ order by timestamp;
                             else -> throw IllegalArgumentException("Invalid to number type: $type")
                         }
                     },
-                    content = rs.getString("text"),
+                    content = rs.getString("unencrypted_text"),
                     timestamp = rs.getTimestamp("timestamp").toInstant(),
                 )
             }

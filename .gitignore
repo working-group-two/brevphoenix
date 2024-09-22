@@ -15,3 +15,5 @@ config/credentials.toml
 node_modules/
 .DS_Store
 deploy.sh
+config/public_key.txt
+config/private_key.txt

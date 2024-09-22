@@ -1,5 +1,5 @@
 <template id="conversation">
-  <article>
+  <article class="h-full flex flex-col">
     <div v-for="(message, index) in messages" class="flex flex-col p-4" :class="{ 'mt-auto': index === 0 }">
       <div v-if="message.direction === 'FROM_SUBSCRIBER'" class="flex flex-row-reverse">
         <div class="flex flex-col">

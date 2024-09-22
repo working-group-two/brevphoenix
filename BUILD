@@ -53,6 +53,8 @@ java_binary(
     data = [
         "config/credentials.toml",
         "config/localhost.toml",
+        "config/private_key.txt",
+        "config/public_key.txt",
     ],
     main_class = "com.brevphoenix.MainKt",
     runtime_deps = [
