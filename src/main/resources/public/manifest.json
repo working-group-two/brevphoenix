@@ -1,0 +1,44 @@
+{
+  "short_name": "BrevPhoenix",
+  "icons": [
+    {
+      "src": "/img/192.jpeg",
+      "type": "image/jpeg",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/img/512.jpeg",
+      "type": "image/jpeg",
+      "sizes": "512x512"
+    },
+    {
+      "src": "/favicon.jpeg",
+      "type": "image/jpeg",
+      "sizes": "1024x1024"
+    },
+    {
+      "src": "/favicon.png",
+      "type": "image/png",
+      "sizes": "1024x1024"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/img/screenshots/narrow.png",
+      "type": "image/png",
+      "sizes": "749x1041",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/img/screenshots/wide.png",
+      "type": "image/png",
+      "sizes": "1094x646",
+      "form_factor": "wide"
+    }
+  ],
+  "id": "/",
+  "start_url": "/",
+  "background_color": "#1c1917",
+  "display": "standalone",
+  "theme_color": "#451a03"
+}
