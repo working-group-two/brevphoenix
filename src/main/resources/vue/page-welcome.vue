@@ -92,9 +92,9 @@ app.component("page-welcome", {
       this.newConversation = "";
       this.msisdnToSmsMap[msisdn] = this.msisdnToSmsMap[msisdn] ?? [];
       this.setActive(msisdn);
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.$refs["message"].focus()
-      });
+      }, 0)
     },
     registerWs() {
       const secureWebsocketOrNot = location.protocol === 'https:' ? 'wss' : 'ws';
