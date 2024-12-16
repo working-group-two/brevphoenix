@@ -12,6 +12,11 @@ data class Config(
     val appDatabase: HikariDataSource,
     val sessionDatabase: HikariDataSource,
     val databaseKeyPairConfig: KeyPairConfig,
+    val logLevels: Map<String, String> = mapOf(
+        "defaultLogLevel" to "info",
+        "com.brevphoenix" to "info",
+        "com.brevphoenix.sms.SmsDatabaseHandler" to "debug",
+    )
 )
 
 data class OAuthCredentials(

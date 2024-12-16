@@ -24,6 +24,7 @@ import io.javalin.json.JavalinJackson
 import io.javalin.validation.JavalinValidation
 import io.javalin.vue.VueComponent
 import org.eclipse.jetty.server.handler.ContextHandler.ApproveAliases
+import org.slf4j.LoggerFactory
 import java.io.File
 
 lateinit var config: Config
@@ -40,8 +41,9 @@ fun main(args: Array<String>) {
         .build()
         .loadConfigOrThrow()
 
-
-    SmsDatabaseHandler.init()
+    // set log levels
+    System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", config.logLevels["defaultLogLevel"] ?: "info")
+    config.logLevels.forEach { (key, value) -> System.setProperty("org.slf4j.simpleLogger.log.$key", value) }
 
     val app = Javalin.create { config ->
         config.staticFiles.add {
@@ -72,6 +74,7 @@ fun main(args: Array<String>) {
 
     JavalinValidation.register(PhoneNumber::class.java, PhoneNumber::parse)
     SmsService.init()
+    SmsDatabaseHandler.init()
 
     app.routes {
         get("/sign-in", VueComponent("page-sign-in"), Role.ANY)

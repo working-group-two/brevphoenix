@@ -3,11 +3,14 @@ package com.brevphoenix.sms
 import com.brevphoenix.PhoneNumber
 import com.brevphoenix.config
 import org.jdbi.v3.core.Jdbi
+import org.kxtra.slf4j.debug
+import org.kxtra.slf4j.getLogger
 import org.slf4j.LoggerFactory
+import kotlin.time.measureTimedValue
 
 object SmsDatabaseHandler {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
+    private val logger = getLogger()
     private val jdbi = Jdbi.create(config.appDatabase)
     private val privateKey = config.databaseKeyPairConfig.privateKeyFile.readText()
     private val publicKey = config.databaseKeyPairConfig.publicKeyFile.readText()
@@ -70,22 +73,30 @@ RETURNING id;
         )
             .bind("eventId", sms.eventId)
             .bind("sub", sms.sub)
-            .bind("from_number", when (sms.from) {
-                is Address.InternationalNumber -> sms.from.phoneNumber.e164
-                is Address.TextAddress -> sms.from.text
-            })
-            .bind("from_number_type", when (sms.from) {
-                is Address.InternationalNumber -> "e164"
-                is Address.TextAddress -> "text"
-            })
-            .bind("to_number", when (sms.to) {
-                is Address.InternationalNumber -> sms.to.phoneNumber.e164
-                is Address.TextAddress -> sms.to.text
-            })
-            .bind("to_number_type", when (sms.to) {
-                is Address.InternationalNumber -> "e164"
-                is Address.TextAddress -> "text"
-            })
+            .bind(
+                "from_number", when (sms.from) {
+                    is Address.InternationalNumber -> sms.from.phoneNumber.e164
+                    is Address.TextAddress -> sms.from.text
+                }
+            )
+            .bind(
+                "from_number_type", when (sms.from) {
+                    is Address.InternationalNumber -> "e164"
+                    is Address.TextAddress -> "text"
+                }
+            )
+            .bind(
+                "to_number", when (sms.to) {
+                    is Address.InternationalNumber -> sms.to.phoneNumber.e164
+                    is Address.TextAddress -> sms.to.text
+                }
+            )
+            .bind(
+                "to_number_type", when (sms.to) {
+                    is Address.InternationalNumber -> "e164"
+                    is Address.TextAddress -> "text"
+                }
+            )
             .bind("direction_from_subscriber", sms.direction == Sms.Direction.FROM_SUBSCRIBER)
             .bind("text", sms.content)
             .bind("timestamp", sms.timestamp)
@@ -95,8 +106,10 @@ RETURNING id;
             .one()
     }
 
-    fun getSmsForUser(e164: String): List<Sms> = jdbi.withHandle<List<Sms>, Exception> {
-        it.createQuery("""
+    fun getSmsForUser(e164: String): List<Sms> = measureTimedValue {
+        jdbi.withHandle<List<Sms>, Exception> {
+            it.createQuery(
+                """
 SELECT
     *,
     pgp_pub_decrypt(text, dearmor(:private_key), :passphrase) as unencrypted_text
@@ -108,34 +121,39 @@ WHERE
     OR
     (from_number = :e164 AND to_number = :e164)
 order by timestamp;
-""".trimIndent())
-            .bind("e164", e164)
-            .bind("private_key", privateKey)
-            .bind("passphrase", config.databaseKeyPairConfig.password ?: "")
-            .map { rs, _ ->
-                Sms(
-                    id = rs.getLong("id"),
-                    eventId = rs.getString("eventId"),
-                    sub = rs.getString("sub"),
-                    direction = if (rs.getBoolean("direction_from_subscriber")) Sms.Direction.FROM_SUBSCRIBER else Sms.Direction.TO_SUBSCRIBER,
-                    from = rs.getString("from_number_type").let { type ->
-                        when (type) {
-                            "e164" -> Address.InternationalNumber(PhoneNumber.parse(rs.getString("from_number")))
-                            "text" -> Address.TextAddress(rs.getString("from_number"))
-                            else -> throw IllegalArgumentException("Invalid from number type: $type")
-                        }
-                    },
-                    to = rs.getString("to_number_type").let { type ->
-                        when (type) {
-                            "e164" -> Address.InternationalNumber(PhoneNumber.parse(rs.getString("to_number")))
-                            "text" -> Address.TextAddress(rs.getString("to_number"))
-                            else -> throw IllegalArgumentException("Invalid to number type: $type")
-                        }
-                    },
-                    content = rs.getString("unencrypted_text"),
-                    timestamp = rs.getTimestamp("timestamp").toInstant(),
-                )
-            }
-            .list()
+""".trimIndent()
+            )
+                .bind("e164", e164)
+                .bind("private_key", privateKey)
+                .bind("passphrase", config.databaseKeyPairConfig.password ?: "")
+                .map { rs, _ ->
+                    Sms(
+                        id = rs.getLong("id"),
+                        eventId = rs.getString("eventId"),
+                        sub = rs.getString("sub"),
+                        direction = if (rs.getBoolean("direction_from_subscriber")) Sms.Direction.FROM_SUBSCRIBER else Sms.Direction.TO_SUBSCRIBER,
+                        from = rs.getString("from_number_type").let { type ->
+                            when (type) {
+                                "e164" -> Address.InternationalNumber(PhoneNumber.parse(rs.getString("from_number")))
+                                "text" -> Address.TextAddress(rs.getString("from_number"))
+                                else -> throw IllegalArgumentException("Invalid from number type: $type")
+                            }
+                        },
+                        to = rs.getString("to_number_type").let { type ->
+                            when (type) {
+                                "e164" -> Address.InternationalNumber(PhoneNumber.parse(rs.getString("to_number")))
+                                "text" -> Address.TextAddress(rs.getString("to_number"))
+                                else -> throw IllegalArgumentException("Invalid to number type: $type")
+                            }
+                        },
+                        content = rs.getString("unencrypted_text"),
+                        timestamp = rs.getTimestamp("timestamp").toInstant(),
+                    )
+                }
+                .list()
+        }
+    }.let { (result, duration) ->
+        logger.debug { "Retrieved ${result.size} SMS for $e164 in $duration" }
+        result
     }
 }
