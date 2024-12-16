@@ -1,5 +1,5 @@
 <template id="page-welcome">
-  <div class="page-welcome h-svh w-full text-gray-300">
+  <div class="page-welcome h-svh text-gray-300">
     <nav class="flex flex-col h-full">
       <h1 class="text-2xl text-orange-600 p-4">
         <button @click="activeConversationMsisdn = null">BrevPhoenix</button>
@@ -10,8 +10,12 @@
                placeholder="+47 999 00 111">
         <button class="bg-orange-800 text-orange-100 p-2 rounded">Create</button>
       </form>
-      <div class="overflow-y-auto flex flex-col">
+      <div class="overflow-y-auto flex flex-col h-full h-full">
         <transition-group name="conversation-list">
+          <conversation-item
+            v-if="loadingSms"
+            msisdn="Loading conversations…"
+          ></conversation-item>
           <conversation-item
               v-for="[msisdnOrText, conversation] in sortedConversations"
               :key="msisdnOrText"
@@ -57,6 +61,7 @@ app.component("page-welcome", {
       message: "",
       newConversation: "",
       activeConversationMsisdn: null,
+      loadingSms: true,
       msisdnToSmsMap: {},
       audioNotification: new Audio("/bip.mp3"),
       lastSentMessage: null,
@@ -173,12 +178,18 @@ app.component("page-welcome", {
           });
     },
     getSms() {
+      this.loadingSms = true;
       axios.get("/api/sms").then(res => {
         this.msisdnToSmsMap = res.data;
         const firstConversation = this.sortedConversations[0];
         if (firstConversation != null) {
           this.setActive(firstConversation[0]);
         }
+      }).catch(e => {
+        console.error(e);
+        alert("Failed to load SMS, please try again later.");
+      }).finally(() => {
+        this.loadingSms = false;
       });
     },
   },
