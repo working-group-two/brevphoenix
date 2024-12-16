@@ -10,7 +10,7 @@
                placeholder="+47 999 00 111">
         <button class="bg-orange-800 text-orange-100 p-2 rounded">Create</button>
       </form>
-      <div class="overflow-y-auto flex flex-col h-full h-full">
+      <div class="overflow-y-auto flex flex-col h-full">
         <transition-group name="conversation-list">
           <conversation-item
             v-if="loadingSms"
