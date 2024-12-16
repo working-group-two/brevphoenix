@@ -1,5 +1,5 @@
 <template id="page-welcome">
-  <div class="page-welcome h-svh text-gray-300">
+  <div class="page-welcome h-svh text-gray-300 flex flex-wrap">
     <nav class="flex flex-col h-full">
       <h1 class="text-2xl text-orange-600 p-4">
         <button @click="activeConversationMsisdn = null">BrevPhoenix</button>
@@ -13,8 +13,8 @@
       <div class="overflow-y-auto flex flex-col h-full">
         <transition-group name="conversation-list">
           <conversation-item
-            v-if="loadingSms"
-            msisdn="Loading conversations…"
+              v-if="loadingSms"
+              msisdn="Loading conversations…"
           ></conversation-item>
           <conversation-item
               v-for="[msisdnOrText, conversation] in sortedConversations"
@@ -29,7 +29,7 @@
     </nav>
     <main class="flex-grow bg-gradient-to-tl from-black to-stone-700 h-svh">
       <conversation-empty-state v-if="activeConversationMsisdn == null"></conversation-empty-state>
-      <div v-else class="flex flex-col h-full text-orange-100">
+      <div v-if="activeConversationMsisdn != null" class="flex flex-col h-full text-orange-100">
         <h2 class="text-2xl p-4 text-orange-600">{{ activeConversationMsisdn }}<span
             v-if="activeConversationName != null"> ({{ activeConversationName }})</span></h2>
         <div class="flex-grow overflow-y-auto flex flex-col h-full justify-end" ref="messages">
@@ -42,7 +42,7 @@
                     @keydown.prevent.ctrl.enter="sendMessage"
                     @keydown.prevent.meta.enter="sendMessage"
                     @keydown.prevent.exact.enter="sendMessage"
-                    class="message flex-grow bg-stone-600 text-orange-100 placeholder:text-orange-50 p-2 rounded"
+                    class="flex-grow bg-stone-600 text-orange-100 placeholder:text-orange-50 p-2 rounded"
                     placeholder="Text message"
           ></textarea>
           <button class="bg-stone-600 text-gray-300 p-2 rounded h-full">Send</button>
@@ -199,13 +199,16 @@ app.component("page-welcome", {
 .page-welcome {
   --bg-color-deg: 20deg;
   background: hsl(var(--bg-color-deg) 30% 2% / 1);
-  display: flex;
-  flex-direction: row;
 }
 
 nav {
-  flex: 0 0 370px;
+  flex: 1 1 340px;
+  max-width: min(700px, 100%);
   background: hsl(var(--bg-color-deg) 30% 3% / 1);
+}
+
+main {
+  flex: 1000 1 50%;
 }
 
 h1 {
